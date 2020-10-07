@@ -9,7 +9,7 @@ import java.util.Timer;
 
 public class SetController {
 	
-	private JFrame gameJFrame;
+    private JFrame gameJFrame;
     private Container gameContentPane;
     private boolean gameIsReady = false;
     private Timer gameTimer = new java.util.Timer();
