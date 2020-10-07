@@ -3,37 +3,46 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-// This is a test
-
 public class SetCard {
 	
-	private int number; // can be {1,2,3}
-	private String color; // can be {"red","blue","green"}
-	private String fill; // can be {"empty","solid","gradient"}
-	private String shape; // can be {"rectangle","circle","squiggle"}
+	private String number; // can be {"One","Two","Three"}
+	private String color; // can be {"Red","Purple","Green"}
+	private String fill; // can be {"Open","Solid","Gradient"}
+	private String shape; // can be {"Diamonds","Ovals","Squiggles"}
 	private boolean selected;
-	protected JFrame gameFrame;
-	protected JLabel gameLabel;
+	private boolean visible;
+	private ImageIcon picture;
+	protected JFrame frameToDraw;
+	protected JLabel labelToDraw;
 	
-	public SetCard(int number,String color,String fill,String shape)
+	public SetCard(String number,String color,String fill,String shape,JFrame gameFrame,JLabel gameLabel)
 	{
 		this.number = number;
 		this.color = color;
 		this.fill = fill;
 		this.shape = shape;
 		this.selected = false;
+		this.visible = false;
+		this.frameToDraw = gameFrame;
+		this.labelToDraw = gameLabel;
+		setCardPic();
 	}
 	
 	public String picFileName()
 	{
-		String fileName = "/cardPics/"+this.shape+"/"+this.color+"/"+this.fill+"/"+Integer.toString(this.number);
+		String fileName = "/cardPics/"+this.shape+"/"+this.color+"/"+this.fill+"/"+this.number;
 		return(fileName);
+	}
+	
+	public void setCardPic()
+	{
+		this.picture = new ImageIcon(picFileName());
 	}
 	
 	public void displayCard(JFrame gameFrame,int xCoord,int yCoord)
 	{
 		// display picture of card to gameFrame using gameLabel
-		ImageIcon picture = new ImageIcon(picFileName());
+		this.visible = true;
 	}
 	
 	public void cardPressed()
