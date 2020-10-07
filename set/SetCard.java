@@ -3,6 +3,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+// This is a test
+
 public class SetCard {
 	
 	private int number; // can be {1,2,3}
