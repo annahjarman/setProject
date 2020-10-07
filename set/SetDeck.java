@@ -1,13 +1,13 @@
-package setGame;
+package set;
 
-public class Deck {
+public class SetDeck {
 
 	private int cardsUsed;
 	private Deck[] deck;
 
 	
-	public Deck() {
-		deck = new Deck[81];
+	public SetDeck() {
+		deck = new SetDeck[81];
 		int cardCount = 0; //Cards made thus far?
 
 	}
@@ -31,7 +31,7 @@ public class Deck {
 public void shuffle() {
 	for(int i = 80; i > 0; i-- ) {
 		int rand = (int)(Math.random()*(i+1));
-		Deck temp = deck[i];
+		SetDeck temp = deck[i];
 		deck[i] = deck[rand];
 		deck[rand] = temp;
 	}
@@ -43,7 +43,7 @@ public int cardsLeft() {
 
 }
 
-public Deck deal() {
+public SetDeck deal() {
 	if (cardsUsed == 81)
 		shuffle();
 		cardsUsed++;
