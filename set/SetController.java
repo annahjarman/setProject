@@ -1,9 +1,7 @@
-package setGame;
+package set;
 
 import javax.swing.JFrame; // for JFrame
 import javax.swing.JOptionPane; // messages are displayed using JOptionPane
-
-
 import javax.swing.ImageIcon; // messages have an icon
 import java.awt.*; // for graphics & MouseListener 
 import java.awt.event.*; // need for events and MouseListener
