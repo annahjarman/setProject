@@ -2,6 +2,10 @@ package set;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.border.Border;
+import java.awt.*;
 
 public class SetCard {
 	
@@ -14,8 +18,10 @@ public class SetCard {
 	private ImageIcon picture;
 	protected JFrame frameToDraw;
 	protected JLabel labelToDraw;
+	final private Border normalBorder = BorderFactory.createEmptyBorder(1,1,1,1);
+	final private Border highlightBorder = BorderFactory.createLineBorder(Color.blue);
 	
-	public SetCard(String number,String color,String fill,String shape,JFrame gameFrame,JLabel gameLabel)
+	public SetCard(String number,String color,String fill,String shape,JFrame gameFrame)
 	{
 		this.number = number;
 		this.color = color;
@@ -24,13 +30,13 @@ public class SetCard {
 		this.selected = false;
 		this.visible = false;
 		this.frameToDraw = gameFrame;
-		this.labelToDraw = gameLabel;
+		this.labelToDraw = new JLabel();
 		setCardPic();
 	}
 	
 	public String picFileName()
 	{
-		String fileName = "/cardPics/"+this.shape+"/"+this.color+"/"+this.fill+"/"+this.number;
+		String fileName = "src/cardPics/"+this.number+this.shape+this.color+this.fill+".jpg";
 		return(fileName);
 	}
 	
@@ -39,10 +45,18 @@ public class SetCard {
 		this.picture = new ImageIcon(picFileName());
 	}
 	
-	public void displayCard(JFrame gameFrame,int xCoord,int yCoord)
+	public void displayCard(JFrame gameFrame,int xCoord,int yCoord,int width,int height)
 	{
 		// display picture of card to gameFrame using gameLabel
+		labelToDraw.setIcon(this.picture);
+		labelToDraw.setText("Hello world");
+		labelToDraw.setBounds(xCoord,yCoord,width,height);
+		labelToDraw.setBorder(normalBorder);
+		gameFrame.getContentPane().add(labelToDraw);
+		labelToDraw.setVisible(true);
 		this.visible = true;
+		gameFrame.setVisible(false);
+		gameFrame.setVisible(true);
 	}
 	
 	public void cardPressed()
@@ -60,23 +74,25 @@ public class SetCard {
 	public void selectCard()
 	{
 		this.selected = true;
-		// if card is visible, highlight()
+		if(this.visible)
+			highlight();
 	}
 	
 	public void deselectCard()
 	{
 		this.selected = false;
-		// if card visible, removeHighlight()
+		if(this.visible)
+			removeHighlight();
 	}
 	
 	public void highlight()
 	{
-		// highlight selected card
+		labelToDraw.setBorder(highlightBorder);
 	}
 	
 	public void removeHighlight()
 	{
-		// remove highlight on card
+		labelToDraw.setBorder(normalBorder);
 	}
 	
 	public boolean isSelected()
