@@ -2,7 +2,6 @@ package set;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.*;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -18,10 +17,6 @@ public class SetCard {
 	private ImageIcon picture;
 	protected JFrame frameToDraw;
 	protected JLabel labelToDraw;
-	private int xCoord;
-	private int yCoord;
-	private int width;
-	private int height;
 	final private Border normalBorder = BorderFactory.createEmptyBorder(1,1,1,1);
 	final private Border highlightBorder = BorderFactory.createLineBorder(Color.RED);
 	
@@ -60,10 +55,6 @@ public class SetCard {
 		this.visible = true;
 		frameToDraw.setVisible(false);
 		frameToDraw.setVisible(true);
-		this.xCoord = xCoord;
-		this.yCoord = yCoord;
-		this.height = height;
-		this.width = width;
 	}
 	
 	public void redrawCard()

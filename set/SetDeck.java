@@ -3,11 +3,11 @@ package set;
 public class SetDeck {
 
 	private int cardsUsed;
-	private Deck[] deck;
+	private SetCard[] deck;
 
 	
 	public SetDeck() {
-		deck = new SetDeck[81];
+		deck = new SetCard[81];
 		int cardCount = 0; //Cards made thus far?
 
 	}
