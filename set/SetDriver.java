@@ -2,6 +2,7 @@ package set;
 
 import javax.swing.JFrame;
 import java.awt.*;
+import javax.swing.JOptionPane;
 
 public class SetDriver {
 
@@ -18,9 +19,11 @@ public class SetDriver {
 		SetCard myCard = new SetCard("1","Purple","Open","Diamonds",myFrame);
 		System.out.println(myCard.picFileName());
 				
-		myCard.displayCard(myFrame, 10, 10, 600, 700);
+		myCard.displayCard(10, 10, 600, 700);
+		JOptionPane.showMessageDialog(myFrame,"That was the unhighlighted");
 		myCard.highlight();
-		myCard.displayCard(myFrame, 10, 10, 600, 700);
+		JOptionPane.showMessageDialog(myFrame,"That was the highlighted");
+		myCard.removeHighlight();
 	}
 
 }

@@ -18,8 +18,12 @@ public class SetCard {
 	private ImageIcon picture;
 	protected JFrame frameToDraw;
 	protected JLabel labelToDraw;
+	private int xCoord;
+	private int yCoord;
+	private int width;
+	private int height;
 	final private Border normalBorder = BorderFactory.createEmptyBorder(1,1,1,1);
-	final private Border highlightBorder = BorderFactory.createLineBorder(Color.blue);
+	final private Border highlightBorder = BorderFactory.createLineBorder(Color.RED);
 	
 	public SetCard(String number,String color,String fill,String shape,JFrame gameFrame)
 	{
@@ -45,18 +49,31 @@ public class SetCard {
 		this.picture = new ImageIcon(picFileName());
 	}
 	
-	public void displayCard(JFrame gameFrame,int xCoord,int yCoord,int width,int height)
+	public void displayCard(int xCoord,int yCoord,int width,int height)
 	{
 		// display picture of card to gameFrame using gameLabel
 		labelToDraw.setIcon(this.picture);
-		labelToDraw.setText("Hello world");
 		labelToDraw.setBounds(xCoord,yCoord,width,height);
 		labelToDraw.setBorder(normalBorder);
-		gameFrame.getContentPane().add(labelToDraw);
+		frameToDraw.getContentPane().add(labelToDraw);
 		labelToDraw.setVisible(true);
 		this.visible = true;
-		gameFrame.setVisible(false);
-		gameFrame.setVisible(true);
+		frameToDraw.setVisible(false);
+		frameToDraw.setVisible(true);
+		this.xCoord = xCoord;
+		this.yCoord = yCoord;
+		this.height = height;
+		this.width = width;
+	}
+	
+	public void redrawCard()
+	{
+		this.visible = false;
+		frameToDraw.getContentPane().add(labelToDraw);
+		labelToDraw.setVisible(true);
+		frameToDraw.setVisible(false);
+		frameToDraw.setVisible(true);
+		this.visible = true;
 	}
 	
 	public void cardPressed()
@@ -69,6 +86,7 @@ public class SetCard {
 		{
 			selectCard();
 		}
+		redrawCard();
 	}
 	
 	public void selectCard()
