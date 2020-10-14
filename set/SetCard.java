@@ -35,7 +35,7 @@ public class SetCard {
 	
 	public String picFileName()
 	{
-		String fileName = "src/cardPics/"+this.number+this.shape+this.color+this.fill+".jpg";
+		String fileName = "src/cardPics/"+this.shape+this.color+this.fill+"_"+this.number+".jpg";
 		return(fileName);
 	}
 	
