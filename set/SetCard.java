@@ -15,6 +15,8 @@ public class SetCard {
 	private boolean selected;
 	private boolean visible;
 	private ImageIcon picture;
+	private int width;
+	private int height;
 	protected JFrame frameToDraw;
 	protected JLabel labelToDraw;
 	final private Border normalBorder = BorderFactory.createEmptyBorder(1,1,1,1);
@@ -30,7 +32,6 @@ public class SetCard {
 		this.visible = false;
 		this.frameToDraw = gameFrame;
 		this.labelToDraw = new JLabel();
-		setCardPic();
 	}
 	
 	public String picFileName()
@@ -39,17 +40,18 @@ public class SetCard {
 		return(fileName);
 	}
 	
-	public void setCardPic()
+	public void setCardPic(int width,int height)
 	{
 		this.picture = new ImageIcon(picFileName());
 		Image tempPic = picture.getImage();
-		Image newPic = tempPic.getScaledInstance(100, 200, java.awt.Image.SCALE_SMOOTH);
+		Image newPic = tempPic.getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH);
 		picture = new ImageIcon(newPic);
 	}
 	
 	public void displayCard(int xCoord,int yCoord,int width,int height)
 	{
 		// display picture of card to gameFrame using gameLabel
+		setCardPic(width,height);
 		labelToDraw.setIcon(this.picture);
 		labelToDraw.setBounds(xCoord,yCoord,width,height);
 		labelToDraw.setBorder(normalBorder);
