@@ -42,6 +42,9 @@ public class SetCard {
 	public void setCardPic()
 	{
 		this.picture = new ImageIcon(picFileName());
+		Image tempPic = picture.getImage();
+		Image newPic = tempPic.getScaledInstance(100, 200, java.awt.Image.SCALE_SMOOTH);
+		picture = new ImageIcon(newPic);
 	}
 	
 	public void displayCard(int xCoord,int yCoord,int width,int height)
