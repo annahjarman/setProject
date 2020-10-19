@@ -1,6 +1,7 @@
 package setGame;
 
 import javax.swing.JFrame; // for JFrame
+import javax.swing.JLabel;
 import javax.swing.JOptionPane; // messages are displayed using JOptionPane
 import javax.swing.ImageIcon; // messages have an icon
 import java.awt.*; // for graphics & MouseListener 
@@ -10,14 +11,17 @@ import java.util.Timer;
 public class SetController extends JFrame implements MouseListener {
 	
 	private JFrame gameJFrame;
+	private JLabel gameJLabel;
     private Container gameContentPane;
     private boolean gameIsReady = false;
+    private boolean cardsOnTable = false;
     private Timer gameTimer = new java.util.Timer();
     private int xMouseOffsetToContentPaneFromJFrame = 0;
     private int yMouseOffsetToContentPaneFromJFrame = 0;
     private int missCounter = 0;
     private int timerCounter = 0;
 	final public int NUMBER_OF_CARDS = 12;
+	final public int MAX_NUMBER_OF_CARDS = 21;
 	//Card[] testCard;
 	int cardXPosition[] = new int[NUMBER_OF_CARDS];
 	int cardYPosition[] = new int[NUMBER_OF_CARDS];
@@ -26,7 +30,8 @@ public class SetController extends JFrame implements MouseListener {
 	int cardWidth;
 	int cardHeight;
 	
-    
+
+
 public SetController() {
 	setSize(800,800);//Steve's code for controller*****
 	setBackground(Color.DARK_GRAY);
@@ -39,9 +44,10 @@ public SetController() {
 	cardYPosition[0] = cardYPosition[1] = cardYPosition[2] = 0+cardMargin + titleBarOffset; //1st row
 	cardYPosition[3] = cardXPosition[4] = cardXPosition[5] = cardHeight + 2*cardMargin + titleBarOffset; //2nd row
 	cardYPosition[6] = cardXPosition[7] = cardXPosition[8] = cardHeight *2 +3*cardMargin + titleBarOffset; //3rd column\
+	}
 	
 	//testCard = new SetController[NUMBER_OF_CARDS];
-}
+
 
 public void timer() { //not the timer class
 	int delay = 10000; //milliseconds
@@ -49,19 +55,60 @@ public void timer() { //not the timer class
 		public void actionPerformed(ActionEvent evt) {
 			repaint(); //calls function below
 		}
-	}
+		
+	};
+}
+	
+	
+public boolean gameIsReady() {
+	return gameIsReady;
+	
+}
+
+public boolean cardsOnTable() {
+	return gameIsReady;
+	
+}
+
+public void run() {
+	
 }
 
 public void startGame() {
 	
 	
 }
+
+public void dealCards() {
+	
+}
+
+public void displayScore() {
+	
+}
+
+public void updateScore() {
+	
+}
+
+public void isThereASetOnTable() {
+	
+}
+
+public void areTheseASet() {
+	
+}
+
+
 public void drawDisplayCard(Graphics g) {
 	for (int i = 0; i < NUMBER_OF_CARDS; i++) {
 		//testCard[i].draw(g, cardXPosition[i], cardYPosition[i], cardWidth, cardHeight);
 		
 	}
 	g.drawString("Try and not click here!", getSize().width/2-40, getSize().height/2+20);
+}
+public void mousePressed() {//ANNA
+	
 }
 	public static void main(String[] args) {
 		SetController myGame = new SetController();
@@ -91,6 +138,8 @@ public void drawDisplayCard(Graphics g) {
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
-	}
 
+	
+	}
+	
 }
