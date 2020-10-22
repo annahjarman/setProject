@@ -29,6 +29,11 @@ public class SetController extends JFrame implements MouseListener {
 	int titleBarOffset = 20;
 	int cardWidth;
 	int cardHeight;
+	private int score;
+	final int numberOfPointsToDeduct = 5;
+	final int numberOfPointsToAdd = 10;
+	private int selectedCards;
+	private SetCard[] selection;
 	
 
 
@@ -60,56 +65,88 @@ public void timer() { //not the timer class
 }
 	
 	
-public boolean gameIsReady() {
-	return gameIsReady;
-	
-}
-
-public boolean cardsOnTable() {
-	return gameIsReady;
-	
-}
-
-public void run() {
-	
-}
-
-public void startGame() {
-	
-	
-}
-
-public void dealCards() {
-	
-}
-
-public void displayScore() {
-	
-}
-
-public void updateScore() {
-	
-}
-
-public void isThereASetOnTable() {
-	
-}
-
-public void areTheseASet() {
-	
-}
-
-
-public void drawDisplayCard(Graphics g) {
-	for (int i = 0; i < NUMBER_OF_CARDS; i++) {
-		//testCard[i].draw(g, cardXPosition[i], cardYPosition[i], cardWidth, cardHeight);
+	public boolean gameIsReady() {
+		return gameIsReady;
 		
 	}
-	g.drawString("Try and not click here!", getSize().width/2-40, getSize().height/2+20);
-}
-public void mousePressed() {//ANNA
 	
-}
+	public boolean cardsOnTable() {
+		return gameIsReady;
+		
+	}
+	
+	public void run() {
+		
+	}
+	
+	public void startGame() {
+		
+		
+	}
+	
+	public void dealCards() {
+		
+	}
+	
+	public void displayScore() {
+		
+	}
+	
+	public void updateScore() {
+		
+	}
+	
+	public void deductPoints()
+	{
+		score = score - numberOfPointsToDeduct;
+	}
+	
+	public void addPoints()
+	{
+		score = score + numberOfPointsToDeduct;
+	}
+	
+	public boolean isThereASetOnTable() {
+		// return true if set on table, false if not
+		return false;
+	}
+	
+	public boolean areTheseASet(SetCard[] myCards) {
+		// return true if passed in array of cards is a set or not
+		return false;
+		
+	}
+
+	public boolean noSetSelected(int xCoord,int yCoord)
+	{
+		// function to return true if user selected no set button
+		return false;
+	}
+	
+	public void dealLevel()
+	{
+		// will either add more cards or not, depending on level
+	}
+	
+	public void addCards()
+	{
+		// add 3 more cards to the table
+	}
+	
+	public SetCard getSelectedCard(int xCoord,int yCoord)
+	{
+		// return either the Card that was selected or null for no card
+		return null;
+	}
+
+	public void drawDisplayCard(Graphics g) {
+		for (int i = 0; i < NUMBER_OF_CARDS; i++) {
+			//testCard[i].draw(g, cardXPosition[i], cardYPosition[i], cardWidth, cardHeight);
+			
+		}
+		g.drawString("Try and not click here!", getSize().width/2-40, getSize().height/2+20);
+	}
+
 	public static void main(String[] args) {
 		SetController myGame = new SetController();
 
@@ -122,6 +159,34 @@ public void mousePressed() {//ANNA
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
+		if(gameIsReady)
+		{
+			if(noSetSelected(e.getX(),e.getY())) // if user selected button to say there's no set on table
+			{
+				if(isThereASetOnTable())
+				{
+					deductPoints();
+					dealLevel();
+				}
+				else
+				{
+					addCards();
+					// reset timer when added
+				}
+			}
+			else
+			{
+				SetCard selected = getSelectedCard(e.getX(),e.getY());
+				if(selected != null)
+				{
+					if(!selected.isSelected())
+					{
+						selected.selectCard();
+						selection[selectedCards] = selected;
+					}
+				}
+			}
+		}
 		
 	}
 	@Override
