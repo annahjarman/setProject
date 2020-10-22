@@ -15,8 +15,10 @@ public class SetCard {
 	private boolean selected;
 	private boolean visible;
 	private ImageIcon picture;
-	private int width;
-	private int height;
+	final int width = 100;
+	final int height = 200;
+	private int xPosition;
+	private int yPosition;
 	protected JFrame frameToDraw;
 	protected JLabel labelToDraw;
 	final private Border normalBorder = BorderFactory.createEmptyBorder(1,1,1,1);
@@ -40,7 +42,7 @@ public class SetCard {
 		return(fileName);
 	}
 	
-	public void setCardPic(int width,int height)
+	public void setCardPic()
 	{
 		this.picture = new ImageIcon(picFileName());
 		Image tempPic = picture.getImage();
@@ -48,12 +50,14 @@ public class SetCard {
 		picture = new ImageIcon(newPic);
 	}
 	
-	public void displayCard(int xCoord,int yCoord,int width,int height)
+	public void displayCard(int xCoord,int yCoord)
 	{
 		// display picture of card to gameFrame using gameLabel
-		setCardPic(width,height);
+		this.xPosition = xCoord;
+		this.yPosition = yCoord;
+		setCardPic();
 		labelToDraw.setIcon(this.picture);
-		labelToDraw.setBounds(xCoord,yCoord,width,height);
+		labelToDraw.setBounds(xPosition,yPosition,width,height);
 		labelToDraw.setBorder(normalBorder);
 		frameToDraw.getContentPane().add(labelToDraw);
 		labelToDraw.setVisible(true);
@@ -70,6 +74,11 @@ public class SetCard {
 		frameToDraw.setVisible(false);
 		frameToDraw.setVisible(true);
 		this.visible = true;
+	}
+	
+	public void undrawCard()
+	{
+		frameToDraw.setVisible(false);
 	}
 	
 	public void selectCard()
@@ -111,6 +120,14 @@ public class SetCard {
 					if(this.number == toCompare.number)
 						return true;
 		return false;
+	}
+	
+	public boolean isCardPushed(int xMouse,int yMouse)
+	{
+		if((xPosition <= xMouse) && (xMouse <= xPosition+width) && (yPosition <= yMouse) && (yMouse <= yPosition+height))
+			return true;
+		else
+			return false;
 	}
 
 }

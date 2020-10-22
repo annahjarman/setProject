@@ -19,7 +19,7 @@ public class SetDriver {
 		SetCard myCard = new SetCard("1","Purple","Open","Diamonds",myFrame);
 		System.out.println(myCard.picFileName());
 				
-		myCard.displayCard(10, 10, 100, 200);
+		myCard.displayCard(10, 10);
 		JOptionPane.showMessageDialog(myFrame,"That was the unhighlighted");
 		myCard.highlight();
 		JOptionPane.showMessageDialog(myFrame,"That was the highlighted");
