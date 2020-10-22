@@ -72,24 +72,12 @@ public class SetCard {
 		this.visible = true;
 	}
 	
-	public void cardPressed()
-	{
-		if(this.selected)
-		{
-			deselectCard();
-		}
-		else
-		{
-			selectCard();
-		}
-		redrawCard();
-	}
-	
 	public void selectCard()
 	{
 		this.selected = true;
 		if(this.visible)
 			highlight();
+		redrawCard();
 	}
 	
 	public void deselectCard()
@@ -97,6 +85,7 @@ public class SetCard {
 		this.selected = false;
 		if(this.visible)
 			removeHighlight();
+		redrawCard();
 	}
 	
 	public void highlight()
@@ -112,6 +101,16 @@ public class SetCard {
 	public boolean isSelected()
 	{
 		return this.selected;
+	}
+	
+	public boolean equals(SetCard toCompare)
+	{
+		if(this.color == toCompare.color)
+			if(this.fill == toCompare.fill)
+				if(this.shape == toCompare.shape)
+					if(this.number == toCompare.number)
+						return true;
+		return false;
 	}
 
 }
