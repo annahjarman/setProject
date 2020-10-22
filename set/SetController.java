@@ -34,7 +34,7 @@ public class SetController extends JFrame implements MouseListener {
 	final int numberOfPointsToAdd = 10;
 	private int selectedCards;
 	private SetCard[] selection;
-	
+	private SetDeck thisDeck;
 
 
 public SetController() {
@@ -64,6 +64,10 @@ public void timer() { //not the timer class
 	};
 }
 	
+	public void resetGame()
+	{
+		// reset the game
+	}
 	
 	public boolean gameIsReady() {
 		return gameIsReady;
@@ -84,15 +88,12 @@ public void timer() { //not the timer class
 		
 	}
 	
-	public void dealCards() {
-		
+	public void dealCards() 
+	{
+		// deal cards to open spaces on table
 	}
 	
 	public void displayScore() {
-		
-	}
-	
-	public void updateScore() {
 		
 	}
 	
@@ -137,6 +138,22 @@ public void timer() { //not the timer class
 	{
 		// return either the Card that was selected or null for no card
 		return null;
+	}
+	
+	public void removeThisCard(SetCard toRemove)
+	{
+		// with for loop, remove the right card from array selection
+		// make sure array is non-null values all at the front
+	}
+	
+	public void undrawTheseCards()
+	{
+		// remove the three cards in the selection array from the table
+	}
+	
+	public void deselectTheseCards()
+	{
+		// deselect the three cards in the selection array
 	}
 
 	public void drawDisplayCard(Graphics g) {
@@ -183,6 +200,42 @@ public void timer() { //not the timer class
 					{
 						selected.selectCard();
 						selection[selectedCards] = selected;
+						selectedCards++;
+						if(selectedCards==3)
+						{
+							if(areTheseASet(selection))
+							{
+								addPoints();
+								undrawTheseCards();
+								for(int i = 0; i < 3; i++)
+								{
+									selection[i] = null;
+								}
+								if(thisDeck.cardsLeft() > 0)
+								{
+									dealCards();
+								}
+								else
+								{
+									if(!isThereASetOnTable())
+									{
+										displayScore();
+										resetGame();
+									}
+								}
+							}
+							else
+							{
+								deductPoints();
+								deselectTheseCards();
+							}
+						}
+						// reset timer when added
+					}
+					else
+					{
+						selected.deselectCard();
+						removeThisCard(selected);
 					}
 				}
 			}
