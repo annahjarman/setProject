@@ -1,53 +1,64 @@
-package set;
+package setGame;
+
+import javax.swing.JFrame;
 
 public class SetDeck {
 
-	private int cardsUsed;
-	private SetCard[] deck;
+	
+	private int cardCount;
+	private final int DECK_SIZE = 81;
+	private SetCard[] deck = new SetCard[DECK_SIZE];
+	private String SHAPE[];
+	private String FILL[];
+	private String NUMBER[];
+	private String COLOR[];
+	private JFrame gameFrame;
 
 	
-	public SetDeck() {
-		deck = new SetCard[81];
+	//declare all strings
+	// x = 0;
+	//++x;
+	
+	public SetDeck(JFrame gameFrame) {		
+			int x = 0;
+			for(int i = 0; i < 3; i++) {
+				String shape = SHAPE[i];
+				for(int j = 0; j < 3; j++) {
+					String fill = FILL[j];
+					for(int k = 0; k < 3; k++) {
+						String number = NUMBER[k];
+						for(int m = 0; m < 3; m++) {
+							String color = COLOR[m];
+							deck[x] = new SetCard(number, color, fill, shape, gameFrame);
+							x++;
+						}
+					}
+				}
+			}
 		int cardCount = 0; //Cards made thus far?
-
-	}
-
-	public static void main(String[] args) {
-		String[] SHAPE = {
-				"Diamonds", "Squiggles", "Ovals"
-		};
-		String[] FILL = {
-				"Open", "Gradient", "Solid"
-		};
-		String [] NUMBER = {
-				"Three", "Two","One"
-		};
-		String [] COLOR = {
-				"Red", "Purple", "Green"
-		};
+		
 	}
 
 	
 public void shuffle() {
-	for(int i = 80; i > 0; i-- ) {
+	for(int i = DECK_SIZE - 1; i >= 0; i-- ) {
 		int rand = (int)(Math.random()*(i+1));
-		SetDeck temp = deck[i];
-		deck[i] = deck[rand];
-		deck[rand] = temp;
+		SetCard temp = deck[rand];
+		deck[rand] = deck[i];
+		deck[i] = temp;
+		
 	}
-	cardsUsed = 0;
+	
 }
 
 public int cardsLeft() {
-	return 81 - cardsUsed;
+	return cardCount;
 
 }
 
-public SetDeck deal() {
-	if (cardsUsed == 81)
-		shuffle();
-		cardsUsed++;
-	return deck[cardsUsed - 1];
+public SetCard deal() {
+		cardCount++;
+	return deck[cardCount];
 	
 }
 }
