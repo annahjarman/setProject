@@ -62,7 +62,7 @@ public class SetController extends TimerTask implements MouseListener {
 		cardXPosition[18] = cardXPosition[19] = cardXPosition[20] = cardHeight*6 + 7*cardMargin + titleBarOffset; // 7th row (for additional cards)
 		
 		
-		for(int i = 0; i < 21; i++) {    //max cards on table
+		for(int i = 0; i < MAX_NUMBER_OF_CARDS; i++) {    //max cards on table
 			cardOnTable[i] = null;
 			isCardOnTable[i] = false;
 		
@@ -96,17 +96,18 @@ public class SetController extends TimerTask implements MouseListener {
 	public void startGame() {
 		gameIsReady = false;
 		myDeck = new SetDeck(gameJFrame); //creates instance of class, go run const.
-		myDeck.shuffle();
+		System.out.println(gameJFrame);
+		//myDeck.shuffle();
 		System.out.println("Shuffled");
-		for(int i = 0; i < 12; i++) {
+		for(int i = 0; i < 9; i++) {
 			cardOnTable[i] = myDeck.deal();
-			System.out.println("Dealing "+cardOnTable[i].getNumber()+" of "+cardOnTable[i].getShape());
+			System.out.println("Dealing "+cardOnTable[i].getNumber()+" of "+cardOnTable[i].getFill());
 		}
 		System.out.println("All Dealt");
 		drawDisplayCard();
 		System.out.println("Cards Displayed");
-		displayScore();
-		gameTimer.schedule(this, (long)0, (long)TIME_TO_FIND_SET);
+		//displayScore();
+		//gameTimer.schedule(this, (long)0, (long)TIME_TO_FIND_SET);
 		gameIsReady = true;
 			
 	}
@@ -242,12 +243,23 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	
 	public void drawDisplayCard() {
-		for (int i = 0; i < MAX_NUMBER_OF_CARDS; i++) {
-			if (isCardOnTable[i]) {
-				System.out.println("Diplaying Card 'i' " + i);
-				cardOnTable[i].displayCard(cardXPosition[i], cardYPosition[i]);
-			}
-		}
+//		for (int i = 0; i < MAX_NUMBER_OF_CARDS; i++) {
+//			if (cardOnTable[i] != null) {
+//				System.out.println("Diplaying Card 'i' " + i);
+//				System.out.println(cardXPosition[i]+","+cardYPosition[i]);
+//				//cardOnTable[i] = new SetCard("1","Purple","Solid","Diamonds",gameJFrame);
+//				cardOnTable[i].displayCard(10, 10);
+//				isCardOnTable[i] = true;
+//			}
+//		}
+//		cardOnTable[0].displayCard(cardXPosition[0], cardYPosition[0]);
+//		cardOnTable[1].displayCard(cardXPosition[1], cardYPosition[1]);
+//		SetCard myCard = new SetCard("1","Purple","Solid","Diamonds",gameJFrame);
+//		myCard.displayCard(10, 10);
+		SetCard myCard = new SetCard("1","Purple","Open","Diamonds",gameJFrame);
+		myCard.displayCard(10, 10);
+		SetCard anotherCard = new SetCard("3","Green","Gradient","Diamonds",gameJFrame);
+		anotherCard.displayCard(100, 10);
 		
 		//g.drawString("Try and not click here!", getSize().width/2-40, getSize().height/2+20);
 		
@@ -324,7 +336,8 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	public static void main(String[] args) {
 		System.out.println("Starting Main");
-		SetController myGame = new SetController();
+		//SetController myGame = new SetController();
+		new SetController();
 		
 	}
 	@Override

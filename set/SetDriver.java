@@ -30,6 +30,9 @@ public class SetDriver {
 		SetCard myOtherCard = myDeck.deal();
 		System.out.println(myOtherCard.getNumber()+" "+myOtherCard.getFill());
 		myOtherCard.displayCard(100, 10);
+		
+		SetCard anotherCard = new SetCard("3","Green","Gradient","Diamonds",myFrame);
+		anotherCard.displayCard(200, 10);
 	}
 
 }

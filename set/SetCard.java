@@ -13,7 +13,7 @@ public class SetCard {
 	private String fill; // can be {"Open","Solid","Gradient"}
 	private String shape; // can be {"Diamonds","Ovals","Squiggles"}
 	private boolean selected;
-	private boolean visible;
+	//private boolean visible;
 	private ImageIcon picture;
 	final int width = 50;
 	final int height = 100;
@@ -31,7 +31,7 @@ public class SetCard {
 		this.fill = fill;
 		this.shape = shape;
 		this.selected = false;
-		this.visible = false;
+		//this.visible = false;
 		this.frameToDraw = gameFrame;
 		this.labelToDraw = new JLabel();
 	}
@@ -61,19 +61,19 @@ public class SetCard {
 		labelToDraw.setBorder(normalBorder);
 		frameToDraw.getContentPane().add(labelToDraw);
 		labelToDraw.setVisible(true);
-		this.visible = true;
+		//this.visible = true;
 		frameToDraw.setVisible(false);
 		frameToDraw.setVisible(true);
 	}
 	
 	public void redrawCard()
 	{
-		this.visible = false;
+		//this.visible = false;
 		frameToDraw.getContentPane().add(labelToDraw);
 		labelToDraw.setVisible(true);
 		frameToDraw.setVisible(false);
 		frameToDraw.setVisible(true);
-		this.visible = true;
+		//this.visible = true;
 	}
 	
 	public void undrawCard()
@@ -84,16 +84,14 @@ public class SetCard {
 	public void selectCard()
 	{
 		this.selected = true;
-		if(this.visible)
-			highlight();
+		highlight();
 		redrawCard();
 	}
 	
 	public void deselectCard()
 	{
 		this.selected = false;
-		if(this.visible)
-			removeHighlight();
+		removeHighlight();
 		redrawCard();
 	}
 	
