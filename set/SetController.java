@@ -27,12 +27,12 @@ public class SetController extends TimerTask implements MouseListener {
     private boolean isCardOnTable[] = new boolean[MAX_NUMBER_OF_CARDS];
     private SetCard cardOnTable[] = new SetCard[MAX_NUMBER_OF_CARDS];
 	//Card[] testCard;
-	int cardXPosition[] = new int[NUMBER_OF_CARDS];
-	int cardYPosition[] = new int[NUMBER_OF_CARDS];
-	int cardMargin = 20;
+	private int cardXPosition[] = new int[MAX_NUMBER_OF_CARDS];
+	private int cardYPosition[] = new int[MAX_NUMBER_OF_CARDS];
+	final int cardMargin = 20;
 	int titleBarOffset = 20;
-	int cardWidth;
-	int cardHeight;
+	final int cardWidth = 50;
+	final int cardHeight = 100;
 	private int score;
 	final int numberOfPointsToDeduct = 5;
 	final int numberOfPointsToAdd = 10;
@@ -43,10 +43,12 @@ public class SetController extends TimerTask implements MouseListener {
 
 
 	public SetController() {
+		gameJFrame = new JFrame();
 		gameJFrame.setSize(800,800);//Steve's code for controller*****
 		gameJFrame.setBackground(Color.DARK_GRAY);
-		cardWidth =(gameJFrame.getSize().width-4*cardMargin)/3;
-		cardHeight = (gameJFrame.getSize().width-4*cardMargin-titleBarOffset)/3;
+		gameJFrame.setVisible(true);
+		//cardWidth =(gameJFrame.getSize().width-4*cardMargin)/3;
+		//cardHeight = (gameJFrame.getSize().width-4*cardMargin-titleBarOffset)/3;
 		//Set up display cards
 		cardYPosition[0] = cardYPosition[3] = cardYPosition[6] = cardYPosition[9] = cardYPosition[12] = cardYPosition[15] = cardYPosition[18] = 0+cardMargin; //1st column
 		cardYPosition[1] = cardYPosition[4] = cardYPosition[7] = cardYPosition[10] = cardYPosition[13] = cardYPosition[16] = cardYPosition[19] = cardWidth + 2*cardMargin; //2nd column
@@ -60,13 +62,12 @@ public class SetController extends TimerTask implements MouseListener {
 		cardXPosition[18] = cardXPosition[19] = cardXPosition[20] = cardHeight*6 + 7*cardMargin + titleBarOffset; // 7th row (for additional cards)
 		
 		
-		gameJFrame = new JFrame();
 		for(int i = 0; i < 21; i++) {    //max cards on table
 			cardOnTable[i] = null;
 			isCardOnTable[i] = false;
 		
 		}
-		startGame(gameJFrame);
+		startGame();
 		
 		
 		}
@@ -92,19 +93,21 @@ public class SetController extends TimerTask implements MouseListener {
 		System.out.println("Timer went off!");
 	}
 	
-	public void startGame(JFrame gameFrame) {
+	public void startGame() {
 		gameIsReady = false;
-		myDeck = new SetDeck(gameFrame); //creates instance of class, go run const.
+		myDeck = new SetDeck(gameJFrame); //creates instance of class, go run const.
 		myDeck.shuffle();
 		System.out.println("Shuffled");
 		for(int i = 0; i < 12; i++) {
 			cardOnTable[i] = myDeck.deal();
+			System.out.println("Dealing "+cardOnTable[i].getNumber()+" of "+cardOnTable[i].getShape());
 		}
 		System.out.println("All Dealt");
 		drawDisplayCard();
 		System.out.println("Cards Displayed");
 		displayScore();
 		gameTimer.schedule(this, (long)0, (long)TIME_TO_FIND_SET);
+		gameIsReady = true;
 			
 	}
 	

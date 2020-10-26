@@ -15,8 +15,8 @@ public class SetCard {
 	private boolean selected;
 	private boolean visible;
 	private ImageIcon picture;
-	final int width = 100;
-	final int height = 200;
+	final int width = 50;
+	final int height = 100;
 	private int xPosition;
 	private int yPosition;
 	protected JFrame frameToDraw;
@@ -128,6 +128,26 @@ public class SetCard {
 			return true;
 		else
 			return false;
+	}
+	
+	public String getColor()
+	{
+		return this.color;
+	}
+	
+	public String getFill()
+	{
+		return this.fill;
+	}
+	
+	public String getShape()
+	{
+		return this.shape;
+	}
+	
+	public String getNumber()
+	{
+		return this.number;
 	}
 
 }

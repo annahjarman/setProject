@@ -24,6 +24,12 @@ public class SetDriver {
 		myCard.highlight();
 		JOptionPane.showMessageDialog(myFrame,"That was the highlighted");
 		myCard.removeHighlight();
+		
+		SetDeck myDeck = new SetDeck(myFrame);
+		myDeck.shuffle();
+		SetCard myOtherCard = myDeck.deal();
+		System.out.println(myOtherCard.getNumber()+" "+myOtherCard.getFill());
+		myOtherCard.displayCard(100, 10);
 	}
 
 }
