@@ -15,8 +15,8 @@ public class SetCard {
 	private boolean selected;
 	//private boolean visible;
 	private ImageIcon picture;
-	final int width = 50;
-	final int height = 100;
+	final int width = 100;
+	final int height = 200;
 	private int xPosition;
 	private int yPosition;
 	protected JFrame frameToDraw;
@@ -82,14 +82,14 @@ public class SetCard {
 	{
 		this.selected = true;
 		highlight();
-		redrawCard();
+		//redrawCard();
 	}
 	
 	public void deselectCard()
 	{
 		this.selected = false;
 		removeHighlight();
-		redrawCard();
+		//redrawCard();
 	}
 	
 	public void highlight()
