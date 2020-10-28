@@ -61,9 +61,6 @@ public class SetCard {
 		labelToDraw.setBorder(normalBorder);
 		frameToDraw.getContentPane().add(labelToDraw);
 		labelToDraw.setVisible(true);
-		//this.visible = true;
-		frameToDraw.setVisible(false);
-		frameToDraw.setVisible(true);
 	}
 	
 	public void redrawCard()
@@ -146,6 +143,11 @@ public class SetCard {
 	public String getNumber()
 	{
 		return this.number;
+	}
+	
+	public JFrame getFrame()
+	{
+		return this.frameToDraw;
 	}
 
 }

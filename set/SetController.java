@@ -46,6 +46,8 @@ public class SetController extends TimerTask implements MouseListener {
 		gameJFrame = new JFrame();
 		gameJFrame.setSize(800,800);//Steve's code for controller*****
 		gameJFrame.setBackground(Color.DARK_GRAY);
+		gameJFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		gameJFrame.getContentPane().setLayout(null);
 		gameJFrame.setVisible(true);
 		//cardWidth =(gameJFrame.getSize().width-4*cardMargin)/3;
 		//cardHeight = (gameJFrame.getSize().width-4*cardMargin-titleBarOffset)/3;
@@ -97,7 +99,7 @@ public class SetController extends TimerTask implements MouseListener {
 		gameIsReady = false;
 		myDeck = new SetDeck(gameJFrame); //creates instance of class, go run const.
 		System.out.println(gameJFrame);
-		//myDeck.shuffle();
+		myDeck.shuffle();
 		System.out.println("Shuffled");
 		for(int i = 0; i < 9; i++) {
 			cardOnTable[i] = myDeck.deal();
@@ -243,23 +245,26 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	
 	public void drawDisplayCard() {
-//		for (int i = 0; i < MAX_NUMBER_OF_CARDS; i++) {
-//			if (cardOnTable[i] != null) {
-//				System.out.println("Diplaying Card 'i' " + i);
-//				System.out.println(cardXPosition[i]+","+cardYPosition[i]);
-//				//cardOnTable[i] = new SetCard("1","Purple","Solid","Diamonds",gameJFrame);
-//				cardOnTable[i].displayCard(10, 10);
-//				isCardOnTable[i] = true;
-//			}
-//		}
+		for (int i = 0; i < MAX_NUMBER_OF_CARDS; i++) {
+			if (cardOnTable[i] != null) {
+				System.out.println("Diplaying Card 'i' " + i);
+				System.out.println(cardXPosition[i]+","+cardYPosition[i]);
+				//cardOnTable[i] = new SetCard("1","Purple","Solid","Diamonds",gameJFrame);
+				System.out.println(cardOnTable[i].getFrame());
+				cardOnTable[i].displayCard(cardXPosition[i], cardYPosition[i]);
+				isCardOnTable[i] = true;
+			}
+		}
+		gameJFrame.setVisible(false);
+		gameJFrame.setVisible(true);
 //		cardOnTable[0].displayCard(cardXPosition[0], cardYPosition[0]);
 //		cardOnTable[1].displayCard(cardXPosition[1], cardYPosition[1]);
 //		SetCard myCard = new SetCard("1","Purple","Solid","Diamonds",gameJFrame);
 //		myCard.displayCard(10, 10);
-		SetCard myCard = new SetCard("1","Purple","Open","Diamonds",gameJFrame);
-		myCard.displayCard(10, 10);
-		SetCard anotherCard = new SetCard("3","Green","Gradient","Diamonds",gameJFrame);
-		anotherCard.displayCard(100, 10);
+//		SetCard myCard = new SetCard("1","Purple","Open","Diamonds",gameJFrame);
+//		myCard.displayCard(10, 10);
+//		SetCard anotherCard = new SetCard("3","Green","Gradient","Diamonds",gameJFrame);
+//		anotherCard.displayCard(100, 10);
 		
 		//g.drawString("Try and not click here!", getSize().width/2-40, getSize().height/2+20);
 		
