@@ -26,6 +26,7 @@ public class SetController extends TimerTask implements MouseListener {
 	final public int MAX_NUMBER_OF_CARDS = 21;
     private boolean isCardOnTable[] = new boolean[MAX_NUMBER_OF_CARDS];
     private SetCard cardOnTable[] = new SetCard[MAX_NUMBER_OF_CARDS];
+    private int currentCardsOnTable;
 	//Card[] testCard;
 	private int cardXPosition[] = new int[MAX_NUMBER_OF_CARDS];
 	private int cardYPosition[] = new int[MAX_NUMBER_OF_CARDS];
@@ -101,9 +102,11 @@ public class SetController extends TimerTask implements MouseListener {
 		System.out.println(gameJFrame);
 		myDeck.shuffle();
 		System.out.println("Shuffled");
+		currentCardsOnTable = 0;
 		for(int i = 0; i < 9; i++) {
 			cardOnTable[i] = myDeck.deal();
 			System.out.println("Dealing "+cardOnTable[i].getNumber()+" of "+cardOnTable[i].getFill());
+			currentCardsOnTable++;
 		}
 		System.out.println("All Dealt");
 		drawDisplayCard();
@@ -112,7 +115,6 @@ public class SetController extends TimerTask implements MouseListener {
 		//gameTimer.schedule(this, (long)0, (long)TIME_TO_FIND_SET);
 		gameIsReady = true;
 		gameJFrame.addMouseListener(this);
-		System.out.println(gameIsReady);
 			
 	}
 	
@@ -143,7 +145,7 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	public boolean areTheseASet(SetCard[] myCards) {
 		// return true if passed in array of cards is a set or not
-		return false;
+		return true;
 	}
 	
 	
@@ -183,7 +185,6 @@ public class SetController extends TimerTask implements MouseListener {
 	{
 		// with for loop, remove the right card from array selection
 		// make sure array is non-null values all at the front
-		toRemove.undrawCard();
 		if(selection[0].equals(toRemove))
 		{
 			if(selection.length==1)
@@ -202,12 +203,11 @@ public class SetController extends TimerTask implements MouseListener {
 		}
 	}
 	
-	public void undrawTheseCards()
+	public void userFoundASet()
 	{
 		// remove the three cards in the selection array from the table
 		for(int i = 0; i < 3; i++)
 		{
-			selection[i].undrawCard();
 			selection[i].deselectCard();
 			undealThisCard(selection[i]);
 			selection[i] = null;
@@ -226,12 +226,17 @@ public class SetController extends TimerTask implements MouseListener {
 	public void undealThisCard(SetCard toUndeal)
 	{
 		// remove a card from the array cardOnTable
+		// remove a card from the table
 		for(int i = 0; i < cardOnTable.length; i++)
 		{
-			if(cardOnTable[i] != null & cardOnTable[i].equals(toUndeal))
+			if(cardOnTable[i] != null)
 			{
-				cardOnTable[i] = null;
-				i = cardOnTable.length;
+				if(cardOnTable[i].equals(toUndeal))
+				{
+					cardOnTable[i].undrawCard();
+					cardOnTable[i] = null;
+					i = cardOnTable.length;
+				}
 			}
 		}
 	}
@@ -296,8 +301,8 @@ public class SetController extends TimerTask implements MouseListener {
 							if(areTheseASet(selection))
 							{
 								addPoints();
-								undrawTheseCards();
-								if(thisDeck.cardsLeft() > 0)
+								userFoundASet();
+								if(thisDeck.cardsLeft() > 0) // gives an error
 								{
 									dealCards();
 								}
