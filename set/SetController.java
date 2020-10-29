@@ -39,7 +39,6 @@ public class SetController extends TimerTask implements MouseListener {
 	final int numberOfPointsToAdd = 10;
 	private int selectedCards;
 	private SetCard[] selection = new SetCard[3];
-	private SetDeck thisDeck;
 
 
 
@@ -106,7 +105,6 @@ public class SetController extends TimerTask implements MouseListener {
 		for(int i = 0; i < 9; i++) {
 			cardOnTable[i] = myDeck.deal();
 			System.out.println("Dealing "+cardOnTable[i].getNumber()+" of "+cardOnTable[i].getFill());
-			currentCardsOnTable++;
 		}
 		System.out.println("All Dealt");
 		drawDisplayCard();
@@ -120,7 +118,17 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	public void dealCards() {
 		// deal cards to open spaces on table
-	
+		reconfigureTable();
+		for(int i = 0; i < currentCardsOnTable-1; i++)
+		{
+			if(cardOnTable[i] == null)
+			{
+				if(myDeck.cardsLeft() > 0)
+				{
+					cardOnTable[i] = myDeck.deal();
+				}
+			}
+		}
 	}
 	
 	public void displayScore() {
@@ -139,13 +147,75 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	public boolean isThereASetOnTable() {
 		// return true if set on table, false if not
-		return true;
+		boolean set = false;
+		for(int i = 0; i < currentCardsOnTable; i++)
+		{
+			
+		}
+		return set;
 	
 	}
 	
 	public boolean areTheseASet(SetCard[] myCards) {
 		// return true if passed in array of cards is a set or not
-		return true;
+		boolean set = true;
+		if(!myCards[0].getFill().equals(myCards[1].getFill()))
+		{
+			if(myCards[2].getFill().equals(myCards[0].getFill()) || myCards[2].getFill().equals(myCards[1].getFill()))
+			{
+				set = false;
+			}
+		}
+		else
+		{
+			if(!myCards[2].getFill().equals(myCards[0].getFill()) || !myCards[2].getFill().equals(myCards[1].getFill()))
+			{
+				set = false;
+			}
+		}
+		if(!myCards[0].getColor().equals(myCards[1].getColor()))
+		{
+			if(myCards[2].getColor().equals(myCards[0].getColor()) || myCards[2].getColor().equals(myCards[1].getColor()))
+			{
+				set = false;
+			}
+		}
+		else
+		{
+			if(!myCards[2].getColor().equals(myCards[0].getColor()) || !myCards[2].getColor().equals(myCards[1].getColor()))
+			{
+				set = false;
+			}
+		}
+		if(!myCards[0].getShape().equals(myCards[1].getShape()))
+		{
+			if(myCards[2].getShape().equals(myCards[0].getShape()) || myCards[2].getShape().equals(myCards[1].getShape()))
+			{
+				set = false;
+			}
+		}
+		else
+		{
+			if(!myCards[2].getShape().equals(myCards[0].getShape()) || !myCards[2].getShape().equals(myCards[1].getShape()))
+			{
+				set = false;
+			}
+		}
+		if(!myCards[0].getNumber().equals(myCards[1].getNumber()))
+		{
+			if(myCards[2].getNumber().equals(myCards[0].getNumber()) || myCards[2].getNumber().equals(myCards[1].getNumber()))
+			{
+				set = false;
+			}
+		}
+		else
+		{
+			if(!myCards[2].getNumber().equals(myCards[0].getNumber()) || !myCards[2].getNumber().equals(myCards[1].getNumber()))
+			{
+				set = false;
+			}
+		}
+		return set;
 	}
 	
 	
@@ -163,6 +233,17 @@ public class SetController extends TimerTask implements MouseListener {
 	public void addCards()
 	{
 		// add 3 more cards to the table
+		if(currentCardsOnTable < 21)
+		{
+			for(int i = 0; i < 3; i++)
+			{
+				if(myDeck.cardsLeft() > 0)
+				{
+					cardOnTable[currentCardsOnTable-1+i] = myDeck.deal();
+				}
+			}
+			drawDisplayCard();
+		}
 	}
 	
 	public SetCard getSelectedCard(int xCoord,int yCoord)
@@ -235,6 +316,7 @@ public class SetController extends TimerTask implements MouseListener {
 				{
 					cardOnTable[i].undrawCard();
 					cardOnTable[i] = null;
+					currentCardsOnTable--;
 					i = cardOnTable.length;
 				}
 			}
@@ -244,10 +326,34 @@ public class SetController extends TimerTask implements MouseListener {
 	public void reconfigureTable()
 	{
 		// reconfigure the table once, after new cards have been added, a set is taken away
+		if(currentCardsOnTable>12)
+		{
+			SetCard[] cardsToAdd = {null,null,null};
+			int beg = 0;
+			for(int i = currentCardsOnTable-4; i < currentCardsOnTable; i++)
+			{
+				if(cardOnTable[i] != null)
+				{
+					cardsToAdd[beg] = cardOnTable[i];
+					cardOnTable[i] = null;
+				}
+			}
+			int index = 0;
+			for(int k = 0; k < currentCardsOnTable-3; k++)
+			{
+				if(cardOnTable[k] == null)
+				{
+					cardOnTable[k] = cardsToAdd[index];
+					index++;
+				}
+			}
+			drawDisplayCard();
+		}
 	}
 	
 	
 	public void drawDisplayCard() {
+		gameJFrame.getContentPane().removeAll();
 		for (int i = 0; i < MAX_NUMBER_OF_CARDS; i++) {
 			if (cardOnTable[i] != null) {
 				System.out.println("Diplaying Card 'i' " + i);
@@ -256,6 +362,7 @@ public class SetController extends TimerTask implements MouseListener {
 				System.out.println(cardOnTable[i].getFrame());
 				cardOnTable[i].displayCard(cardXPosition[i], cardYPosition[i]);
 				isCardOnTable[i] = true;
+				currentCardsOnTable++;
 			}
 		}
 		gameJFrame.setVisible(false);
@@ -267,11 +374,6 @@ public class SetController extends TimerTask implements MouseListener {
 	public void mousePressed(MouseEvent e) {
 		if(gameIsReady)
 		{
-//			SetCard selected = getSelectedCard(e.getX(),e.getY());
-//			if(!selected.isSelected())
-//				selected.selectCard();
-//			else
-//				selected.deselectCard();
 			if(noSetSelected(e.getX(),e.getY())) // if user selected button to say there's no set on table
 			{
 				if(isThereASetOnTable())
@@ -302,7 +404,7 @@ public class SetController extends TimerTask implements MouseListener {
 							{
 								addPoints();
 								userFoundASet();
-								if(thisDeck.cardsLeft() > 0) // gives an error
+								if(myDeck.cardsLeft() > 0) // gives an error
 								{
 									dealCards();
 								}
