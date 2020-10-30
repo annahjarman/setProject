@@ -37,7 +37,7 @@ public class SetController extends TimerTask implements MouseListener {
 	private int score;
 	final int numberOfPointsToDeduct = 5;
 	final int numberOfPointsToAdd = 10;
-	private int selectedCards;
+	private int selectedCards = 0;
 	private SetCard[] selection = new SetCard[3];
 
 
@@ -148,9 +148,16 @@ public class SetController extends TimerTask implements MouseListener {
 	public boolean isThereASetOnTable() {
 		// return true if set on table, false if not
 		boolean set = false;
-		for(int i = 0; i < currentCardsOnTable; i++)
+		for(int i = 0; i < currentCardsOnTable-2; i++)
 		{
-			
+			for(int j = i+1; j < currentCardsOnTable-1; j++)
+			{
+				for(int k = j+1; k < currentCardsOnTable; k++)
+				{
+					SetCard[] theseCards = {cardOnTable[i],cardOnTable[j],cardOnTable[k]};
+					set = areTheseASet(theseCards);
+				}
+			}
 		}
 		return set;
 	
