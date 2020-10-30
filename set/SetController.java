@@ -2,6 +2,7 @@ package set;
 
 import javax.swing.JFrame; // for JFrame
 import javax.swing.JLabel;
+import javax.swing.JButton;
 import javax.swing.JOptionPane; // messages are displayed using JOptionPane
 import javax.swing.ImageIcon; // messages have an icon
 import java.awt.*; // for graphics & MouseListener 
@@ -13,15 +14,15 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	private int TIME_TO_FIND_SET = 10000; //Arbitrary 10 seconds
 	private JFrame gameJFrame;
-	private JLabel gameJLabel;
-    private Container gameContentPane;
+//	private JLabel gameJLabel;
+//    private Container gameContentPane;
     private boolean gameIsReady = false;
     private Timer gameTimer = new java.util.Timer();
-    private int xMouseOffsetToContentPaneFromJFrame = 0;
-    private int yMouseOffsetToContentPaneFromJFrame = 0;
+//    private int xMouseOffsetToContentPaneFromJFrame = 0;
+//    private int yMouseOffsetToContentPaneFromJFrame = 0;
     private SetDeck myDeck;
-    private int missCounter = 0;
-    private int timerCounter = 0;
+//    private int missCounter = 0;
+//    private int timerCounter = 0;
 	final public int NUMBER_OF_CARDS = 12;
 	final public int MAX_NUMBER_OF_CARDS = 21;
     private boolean isCardOnTable[] = new boolean[MAX_NUMBER_OF_CARDS];
@@ -34,6 +35,11 @@ public class SetController extends TimerTask implements MouseListener {
 	int titleBarOffset = 20;
 	final int cardWidth = 100;
 	final int cardHeight = 200;
+	final int noSetWidth = 3*cardWidth + 2*cardMargin;
+	final int noSetHeight = cardHeight/3;
+	private int noSetXPosition;
+	private int noSetYPosition;
+	private JButton noSet;
 	private int score;
 	final int numberOfPointsToDeduct = 5;
 	final int numberOfPointsToAdd = 10;
@@ -63,6 +69,17 @@ public class SetController extends TimerTask implements MouseListener {
 		cardXPosition[15] = cardXPosition[16] = cardXPosition[17] = cardWidth*5 + 6*cardMargin + titleBarOffset; // 6th row (for additional cards)
 		cardXPosition[18] = cardXPosition[19] = cardXPosition[20] = cardWidth*6 + 7*cardMargin + titleBarOffset; // 7th row (for additional cards)
 		
+		noSetYPosition = 3*cardHeight + 4*cardMargin;
+		noSetXPosition = cardXPosition[0];
+		
+		noSet = new JButton("No Set On Table");
+		noSet.setBounds(noSetXPosition,noSetYPosition,noSetWidth,noSetHeight);
+		noSet.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Button pressed");
+				noSetButtonPushed();
+			}
+		});
 		
 		for(int i = 0; i < MAX_NUMBER_OF_CARDS; i++) {    //max cards on table
 			cardOnTable[i] = null;
@@ -148,14 +165,28 @@ public class SetController extends TimerTask implements MouseListener {
 	public boolean isThereASetOnTable() {
 		// return true if set on table, false if not
 		boolean set = false;
-		for(int i = 0; i < currentCardsOnTable-2; i++)
+		for(int i = 0; i < MAX_NUMBER_OF_CARDS-2; i++)
 		{
-			for(int j = i+1; j < currentCardsOnTable-1; j++)
+			if(cardOnTable[i] != null)
 			{
-				for(int k = j+1; k < currentCardsOnTable; k++)
+				for(int j = i+1; j < MAX_NUMBER_OF_CARDS-1; j++)
 				{
-					SetCard[] theseCards = {cardOnTable[i],cardOnTable[j],cardOnTable[k]};
-					set = areTheseASet(theseCards);
+					if(cardOnTable[j] != null)
+					{
+						for(int k = j+1; k < MAX_NUMBER_OF_CARDS; k++)
+						{
+							if(cardOnTable[k] != null)
+							{
+								SetCard[] theseCards = new SetCard[3];
+								theseCards[0] = cardOnTable[i];
+								theseCards[1] = cardOnTable[j];
+								theseCards[2] = cardOnTable[k];
+								System.out.println(i+" "+j+" "+k);
+								System.out.println(cardOnTable[0].getShape());
+								set = areTheseASet(theseCards);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -226,15 +257,24 @@ public class SetController extends TimerTask implements MouseListener {
 	}
 	
 	
-	public boolean noSetSelected(int xCoord,int yCoord)
+	public void noSetButtonPushed()
 	{
-		// function to return true if user selected no set button
-		return false;
+		// runs if user selected no set button
+		if(isThereASetOnTable())
+		{
+			deductPoints();
+			dealLevel();
+		}
+		else
+		{
+			addCards();
+			// reset timer when added
+		}
 	}
 	
 	public void dealLevel()
 	{
-		// will either add more cards or not, depending on level
+		addCards();
 	}
 	
 	public void addCards()
@@ -372,6 +412,10 @@ public class SetController extends TimerTask implements MouseListener {
 				currentCardsOnTable++;
 			}
 		}
+		System.out.println(currentCardsOnTable);
+		
+		gameJFrame.add(noSet);
+		
 		gameJFrame.setVisible(false);
 		gameJFrame.setVisible(true);
 	}
@@ -381,62 +425,45 @@ public class SetController extends TimerTask implements MouseListener {
 	public void mousePressed(MouseEvent e) {
 		if(gameIsReady)
 		{
-			if(noSetSelected(e.getX(),e.getY())) // if user selected button to say there's no set on table
+			SetCard selected = getSelectedCard(e.getX(),e.getY());
+			if(selected != null)
 			{
-				if(isThereASetOnTable())
+				if(!selected.isSelected())
 				{
-					deductPoints();
-					dealLevel();
-				}
-				else
-				{
-					addCards();
-					// reset timer when added
-				}
-			}
-			else
-			{
-				SetCard selected = getSelectedCard(e.getX(),e.getY());
-				if(selected != null)
-				{
-					if(!selected.isSelected())
+					selected.selectCard();
+					selection[selectedCards] = selected;
+					selectedCards++;
+					if(selectedCards==3)
 					{
-						selected.selectCard();
-						selection[selectedCards] = selected;
-						selectedCards++;
-						if(selectedCards==3)
+						selectedCards = 0;
+						if(areTheseASet(selection))
 						{
-							selectedCards = 0;
-							if(areTheseASet(selection))
+							addPoints();
+							userFoundASet();
+							if(myDeck.cardsLeft() > 0)
 							{
-								addPoints();
-								userFoundASet();
-								if(myDeck.cardsLeft() > 0) // gives an error
-								{
-									dealCards();
-								}
-								else
-								{
-									if(!isThereASetOnTable())
-									{
-										displayScore();
-										resetGame();
-									}
-								}
+								dealCards();
 							}
 							else
 							{
-								deductPoints();
-								deselectTheseCards();
+								if(!isThereASetOnTable())
+								{
+									displayScore();
+									resetGame();
+								}
 							}
 						}
-						// reset timer when added
+						else
+						{
+							deductPoints();
+							deselectTheseCards();
+						}
 					}
-					else
-					{
-						selected.deselectCard();
-						removeThisCard(selected);
-					}
+				}
+				else
+				{
+					selected.deselectCard();
+					removeThisCard(selected);
 				}
 			}
 		}
