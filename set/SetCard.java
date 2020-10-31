@@ -75,7 +75,7 @@ public class SetCard {
 	
 	public void undrawCard()
 	{
-		frameToDraw.setVisible(false);
+		labelToDraw.setVisible(false);
 	}
 	
 	public void selectCard()

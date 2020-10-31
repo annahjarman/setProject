@@ -164,6 +164,11 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	public boolean isThereASetOnTable() {
 		// return true if set on table, false if not
+//		for(int i = 0; i < 9; i++)
+//		{
+//			System.out.print(" "+cardOnTable[i]);
+//		}
+		System.out.println("");
 		boolean set = false;
 		for(int i = 0; i < MAX_NUMBER_OF_CARDS-2; i++)
 		{
@@ -181,8 +186,8 @@ public class SetController extends TimerTask implements MouseListener {
 								theseCards[0] = cardOnTable[i];
 								theseCards[1] = cardOnTable[j];
 								theseCards[2] = cardOnTable[k];
-								System.out.println(i+" "+j+" "+k);
-								System.out.println(cardOnTable[0].getShape());
+//								System.out.println(i+" "+j+" "+k);
+//								System.out.println(cardOnTable[i].getShape());
 								set = areTheseASet(theseCards);
 							}
 						}
@@ -263,6 +268,7 @@ public class SetController extends TimerTask implements MouseListener {
 		if(isThereASetOnTable())
 		{
 			deductPoints();
+			System.out.println("Score: "+score);
 			dealLevel();
 		}
 		else
@@ -348,6 +354,7 @@ public class SetController extends TimerTask implements MouseListener {
 		for(int i = 0; i < 3; i++)
 		{
 			selection[i].deselectCard();
+			selection[i] = null;
 		}
 	}
 	
@@ -426,6 +433,7 @@ public class SetController extends TimerTask implements MouseListener {
 		if(gameIsReady)
 		{
 			SetCard selected = getSelectedCard(e.getX(),e.getY());
+			System.out.println(selected);
 			if(selected != null)
 			{
 				if(!selected.isSelected())
@@ -436,9 +444,12 @@ public class SetController extends TimerTask implements MouseListener {
 					if(selectedCards==3)
 					{
 						selectedCards = 0;
+						System.out.println(areTheseASet(selection));
+						//deselectTheseCards();
 						if(areTheseASet(selection))
 						{
 							addPoints();
+							System.out.println(score);
 							userFoundASet();
 							if(myDeck.cardsLeft() > 0)
 							{
@@ -456,6 +467,7 @@ public class SetController extends TimerTask implements MouseListener {
 						else
 						{
 							deductPoints();
+							System.out.println(score);
 							deselectTheseCards();
 						}
 					}
