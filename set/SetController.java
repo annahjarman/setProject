@@ -1,7 +1,6 @@
 package set;
-
 import javax.swing.JFrame; // for JFrame
-import javax.swing.JLabel;
+import javax.swing.JLabel;// for JLabel
 import javax.swing.JButton;
 import javax.swing.JOptionPane; // messages are displayed using JOptionPane
 import javax.swing.ImageIcon; // messages have an icon
@@ -9,6 +8,7 @@ import java.awt.*; // for graphics & MouseListener
 import java.awt.event.*; // need for events and MouseListener
 import java.util.Timer;
 import java.util.TimerTask;
+import java.awt.font.*;
 
 public class SetController extends TimerTask implements MouseListener {
 	
@@ -40,12 +40,12 @@ public class SetController extends TimerTask implements MouseListener {
 	private int noSetXPosition;
 	private int noSetYPosition;
 	private JButton noSet;
-	private int score;
+	private int score = 0;
 	final int numberOfPointsToDeduct = 5;
 	final int numberOfPointsToAdd = 10;
 	private int selectedCards = 0;
 	private SetCard[] selection = new SetCard[3];
-
+	private JLabel label = new JLabel("Here is your score: " + score);
 
 
 	public SetController() {
@@ -73,6 +73,7 @@ public class SetController extends TimerTask implements MouseListener {
 		noSetXPosition = cardXPosition[0];
 		
 		noSet = new JButton("No Set On Table");
+		noSet.setFont(new Font("Monospaced", Font.PLAIN, 14)); 
 		noSet.setBounds(noSetXPosition,noSetYPosition,noSetWidth,noSetHeight);
 		noSet.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -92,9 +93,12 @@ public class SetController extends TimerTask implements MouseListener {
 		}
 		
 	
-	public void resetGame()
-	{
-		// reset the game
+	public void resetGame(){  
+		gameIsReady = false;
+    		currentCardsOnTable = 0;
+    		startGame(); 
+    		score = 0;
+    	gameIsReady = true; 
 	}
 		
 	public boolean gameIsReady() {
@@ -149,7 +153,15 @@ public class SetController extends TimerTask implements MouseListener {
 	}
 	
 	public void displayScore() {
+        gameJFrame.getContentPane().add(label);
+       	label.setText("Here is your score: " + score);
+        label.setBounds(90,550,200,400);
+        label.setVisible(true);
+		label.setFont(new Font("Monospaced", Font.PLAIN, 14)); 
 		
+        // Find window size to allow more cards
+        // window listener
+        // hard code postions
 	}
 	
 	public void deductPoints()
@@ -479,7 +491,7 @@ public class SetController extends TimerTask implements MouseListener {
 				}
 			}
 		}
-		
+		displayScore();
 	}
 
 	
