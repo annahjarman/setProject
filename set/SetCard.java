@@ -13,10 +13,9 @@ public class SetCard {
 	private String fill; // can be {"Open","Solid","Gradient"}
 	private String shape; // can be {"Diamonds","Ovals","Squiggles"}
 	private boolean selected;
-	//private boolean visible;
 	private ImageIcon picture;
-	final int width = 100;
-	final int height = 200;
+	private int width;
+	private int height;
 	private int xPosition;
 	private int yPosition;
 	protected JFrame frameToDraw;
@@ -24,16 +23,17 @@ public class SetCard {
 	final private Border normalBorder = BorderFactory.createEmptyBorder(1,1,1,1);
 	final private Border highlightBorder = BorderFactory.createLineBorder(Color.RED);
 	
-	public SetCard(String number,String color,String fill,String shape,JFrame gameFrame)
+	public SetCard(String number,String color,String fill,String shape,int width,int height,JFrame gameFrame)
 	{
 		this.number = number;
 		this.color = color;
 		this.fill = fill;
 		this.shape = shape;
 		this.selected = false;
-		//this.visible = false;
 		this.frameToDraw = gameFrame;
 		this.labelToDraw = new JLabel();
+		this.width = width;
+		this.height = height;
 	}
 	
 	public String picFileName()
