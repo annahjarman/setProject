@@ -1,6 +1,7 @@
-Player1: 0
-Player2: 5
-Player3: 0
-Player4: 15
-Player5: 10
-Player6: 5
+P: 0
+P1: 5
+P2: 15
+P3: 10
+P4: 5
+Anna: 5
+Anna: 0

@@ -11,6 +11,8 @@ import java.util.TimerTask;
 import java.awt.font.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class SetController extends TimerTask implements MouseListener {
@@ -23,6 +25,7 @@ public class SetController extends TimerTask implements MouseListener {
 	private int level;
 	private String filename;
 	private String playerName;
+	private SetPlayer[] savedPlayers = new SetPlayer[1000];
 	private int numPlayers;
 	final int[] TIME_TO_FIND_SET = {30000,20000,10000}; //30 sec for beginner, 20 sec for moderate, 10 for expert
 	private JFrame gameJFrame;
@@ -51,6 +54,7 @@ public class SetController extends TimerTask implements MouseListener {
 	private int selectedCards = 0;
 	private SetCard[] selection = new SetCard[3];
 	private JLabel label = new JLabel();
+	private boolean gotHint = false;
 
 	public SetController() {
 		gameJFrame = new JFrame();
@@ -150,6 +154,7 @@ public class SetController extends TimerTask implements MouseListener {
 			level = this.levels[x];
 			filename = "src/set/scores/"+levelName[level]+".txt";
 			//System.out.println(getHighScore().toString());
+			saveScore();
 			System.out.println("My level: "+level);
 		}
 		else
@@ -224,20 +229,17 @@ public class SetController extends TimerTask implements MouseListener {
 				// "New high score!"
 				// "Your score: "
 				// "Previous high score: "
-				// Buttons: "Quit while you're ahead" or "Ready to win again!"
 			}
 			else if(score < highScore.getScore())
 			{
 				// "Your score: "
 				// "High score: "
-				// Buttons: "I quit..." or "Oh hell no!"
 			}
 			else
 			{
 				// "High score!"
 				// "Your score: "
-				// "High score: "
-				// Buttons: "Nah, I'm good" or "I must win!"
+				// "Previous high score: "
 			}
 		}
 	}
@@ -246,15 +248,23 @@ public class SetController extends TimerTask implements MouseListener {
 	{
 		// make player object with name and score
 		SetPlayer thisPlayer = new SetPlayer(score,playerName);
-		// then record this information in the text file using the toString method
-		// split text file by ": "
-		thisPlayer.toString();
-		// output to filename
+		// append player name and score to existing text file
+		try
+		{
+			FileWriter myWriter = new FileWriter(filename,true);
+			myWriter.write("\n"+thisPlayer.toString());
+			myWriter.close();
+			System.out.println("Output to file successful.");
+		}
+		catch(IOException e)
+		{
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
 	}
 	
 	public SetPlayer getHighScore()
 	{
-		SetPlayer[] players = new SetPlayer[1000];
 		numPlayers = 0;
 		SetPlayer highScore;
 		try
@@ -266,11 +276,11 @@ public class SetController extends TimerTask implements MouseListener {
 				String playerInfo = myScanner.nextLine();
 				String[] info = playerInfo.split(": ");
 				SetPlayer myPlayer = new SetPlayer(Integer.parseInt(info[1]),info[0]);
-				players[numPlayers%1000] = myPlayer;
+				savedPlayers[numPlayers%savedPlayers.length] = myPlayer;
 				numPlayers++;
 			}
 			myScanner.close();
-			highScore = SetPlayer.highScore(players, numPlayers);
+			highScore = SetPlayer.highScore(savedPlayers, numPlayers);
 		}
 		catch(FileNotFoundException e)
 		{
@@ -370,6 +380,7 @@ public class SetController extends TimerTask implements MouseListener {
 				}
 			}
 		}
+		gotHint = true;
 	}
 	
 	public boolean areTheseASet(SetCard[] myCards) {
@@ -615,6 +626,17 @@ public class SetController extends TimerTask implements MouseListener {
 	public void mousePressed(MouseEvent e) {
 		if(gameIsReady)
 		{
+//			if(gotHint)
+//			{
+//				for(int i = 0; i < MAX_NUMBER_OF_CARDS; i++)
+//				{
+//					if(cardOnTable[i].isSelected())
+//					{
+//						cardOnTable[i].deselectCard();
+//					}
+//				}
+//			}
+			gotHint = false;
 			SetCard selected = getSelectedCard(e.getX(),e.getY());
 			System.out.println(selected);
 			if(selected != null)
