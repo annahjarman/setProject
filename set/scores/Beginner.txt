@@ -1,0 +1,6 @@
+Player1: 0
+Player2: 5
+Player3: 0
+Player4: 15
+Player5: 10
+Player6: 5

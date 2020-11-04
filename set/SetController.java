@@ -9,6 +9,9 @@ import java.awt.event.*; // need for events and MouseListener
 import java.util.Timer;
 import java.util.TimerTask;
 import java.awt.font.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class SetController extends TimerTask implements MouseListener {
 	
@@ -18,7 +21,9 @@ public class SetController extends TimerTask implements MouseListener {
 	final int[] levels = {BEGINNER,MODERATE,EXPERT};
 	final String[] levelName = {"Beginner","Moderate","Expert"};
 	private int level;
+	private String filename;
 	private String playerName;
+	private int numPlayers;
 	final int[] TIME_TO_FIND_SET = {30000,20000,10000}; //30 sec for beginner, 20 sec for moderate, 10 for expert
 	private JFrame gameJFrame;
     private boolean gameIsReady = false;
@@ -117,14 +122,14 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	public void startGame() {
 		gameIsReady = false;
-		
+
 		// Player name entry
 		String thisName = JOptionPane.showInputDialog(gameJFrame,"Enter your name:");
 		if(thisName != null)
 		{
 			if(!thisName.isBlank())
 			{
-				System.out.println("Player name:"+thisName+"g");
+				System.out.println("Player name:"+thisName);
 				playerName = thisName;
 			}
 			else
@@ -143,6 +148,8 @@ public class SetController extends TimerTask implements MouseListener {
 		if(x >= 0 && x <= 2)
 		{
 			level = this.levels[x];
+			filename = "src/set/scores/"+levelName[level]+".txt";
+			//System.out.println(getHighScore().toString());
 			System.out.println("My level: "+level);
 		}
 		else
@@ -182,7 +189,7 @@ public class SetController extends TimerTask implements MouseListener {
 	public void dealCards() {
 		// deal cards to open spaces on table
 		reconfigureTable();
-		for(int i = 0; i < currentCardsOnTable-1; i++)
+		for(int i = 0; i < currentCardsOnTable; i++)
 		{
 			if(cardOnTable[i] == null)
 			{
@@ -204,7 +211,35 @@ public class SetController extends TimerTask implements MouseListener {
 		
         // Find window size to allow more cards
         // window listener
-        // hard code postions
+        // hard code positions
+	}
+	
+	public void displayFinalScore()
+	{
+		SetPlayer highScore = getHighScore();
+		if(highScore != null)
+		{
+			if(score > highScore.getScore())
+			{
+				// "New high score!"
+				// "Your score: "
+				// "Previous high score: "
+				// Buttons: "Quit while you're ahead" or "Ready to win again!"
+			}
+			else if(score < highScore.getScore())
+			{
+				// "Your score: "
+				// "High score: "
+				// Buttons: "I quit..." or "Oh hell no!"
+			}
+			else
+			{
+				// "High score!"
+				// "Your score: "
+				// "High score: "
+				// Buttons: "Nah, I'm good" or "I must win!"
+			}
+		}
 	}
 	
 	public void saveScore()
@@ -213,9 +248,36 @@ public class SetController extends TimerTask implements MouseListener {
 		SetPlayer thisPlayer = new SetPlayer(score,playerName);
 		// then record this information in the text file using the toString method
 		// split text file by ": "
-		String filename = "src/set/scores/"+levelName[level]+".txt";
 		thisPlayer.toString();
 		// output to filename
+	}
+	
+	public SetPlayer getHighScore()
+	{
+		SetPlayer[] players = new SetPlayer[1000];
+		numPlayers = 0;
+		SetPlayer highScore;
+		try
+		{
+			File playerScores = new File(filename);
+			Scanner myScanner = new Scanner(playerScores);
+			while(myScanner.hasNextLine())
+			{
+				String playerInfo = myScanner.nextLine();
+				String[] info = playerInfo.split(": ");
+				SetPlayer myPlayer = new SetPlayer(Integer.parseInt(info[1]),info[0]);
+				players[numPlayers%1000] = myPlayer;
+				numPlayers++;
+			}
+			myScanner.close();
+			highScore = SetPlayer.highScore(players, numPlayers);
+		}
+		catch(FileNotFoundException e)
+		{
+			System.out.println("File not found");
+			highScore = null;
+		}
+		return highScore;
 	}
 	
 	public void deductPoints()
@@ -271,6 +333,43 @@ public class SetController extends TimerTask implements MouseListener {
 		}
 		return set;
 	
+	}
+	
+	public void getHint()
+	{
+		for(int i = 0; i < MAX_NUMBER_OF_CARDS-2; i++)
+		{
+			if(cardOnTable[i] != null)
+			{
+				for(int j = i+1; j < MAX_NUMBER_OF_CARDS-1; j++)
+				{
+					if(cardOnTable[j] != null)
+					{
+						for(int k = j+1; k < MAX_NUMBER_OF_CARDS; k++)
+						{
+							if(cardOnTable[k] != null)
+							{
+								SetCard[] theseCards = new SetCard[3];
+								theseCards[0] = cardOnTable[i];
+								theseCards[1] = cardOnTable[j];
+								theseCards[2] = cardOnTable[k];
+								if(areTheseASet(theseCards))
+								{
+									for(int m = 0; m < theseCards.length; m++)
+									{
+										theseCards[m].highlight();
+										theseCards[m].redrawCard();
+									}
+									i = MAX_NUMBER_OF_CARDS;
+									j = MAX_NUMBER_OF_CARDS;
+									k = MAX_NUMBER_OF_CARDS;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	public boolean areTheseASet(SetCard[] myCards) {
@@ -357,6 +456,10 @@ public class SetController extends TimerTask implements MouseListener {
 		if(level != EXPERT)
 		{
 			addCards();
+			if(level == BEGINNER)
+			{
+				getHint();
+			}
 		}
 		displayScore();
 	}
