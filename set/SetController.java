@@ -154,7 +154,7 @@ public class SetController extends TimerTask implements MouseListener {
 			level = this.levels[x];
 			filename = "src/set/scores/"+levelName[level]+".txt";
 			//System.out.println(getHighScore().toString());
-			saveScore();
+			//saveScore();
 			System.out.println("My level: "+level);
 		}
 		else
@@ -188,6 +188,8 @@ public class SetController extends TimerTask implements MouseListener {
 		{
 			System.exit(0);
 		}
+		score = 15;
+		displayFinalScore();
 			
 	}
 	
@@ -229,19 +231,43 @@ public class SetController extends TimerTask implements MouseListener {
 				// "New high score!"
 				// "Your score: "
 				// "Previous high score: "
+				int x = JOptionPane.showConfirmDialog(gameJFrame, "New high score!\nYour score: "+score+"\nPrevious high score: "+highScore.toString(), "Final score", JOptionPane.OK_CANCEL_OPTION);
+				if(x==JOptionPane.CANCEL_OPTION)
+				{
+					System.exit(0);
+				}
 			}
 			else if(score < highScore.getScore())
 			{
 				// "Your score: "
 				// "High score: "
+				int x = JOptionPane.showConfirmDialog(gameJFrame, "Your score: "+score+"\nHigh score: "+highScore.toString(), "Final score", JOptionPane.OK_CANCEL_OPTION);
+				if(x==JOptionPane.CANCEL_OPTION)
+				{
+					System.exit(0);
+				}
 			}
 			else
 			{
 				// "High score!"
 				// "Your score: "
 				// "Previous high score: "
+				int x = JOptionPane.showConfirmDialog(gameJFrame, "High score!\nYour score: "+score+"\nPrevious high score: "+highScore.toString(), "Final score", JOptionPane.OK_CANCEL_OPTION);
+				if(x==JOptionPane.CANCEL_OPTION)
+				{
+					System.exit(0);
+				}
 			}
 		}
+		else
+		{
+			int x = JOptionPane.showConfirmDialog(gameJFrame, "New high score!\nYour score: "+score, "Final score", JOptionPane.OK_CANCEL_OPTION);
+			if(x==JOptionPane.CANCEL_OPTION)
+			{
+				System.exit(0);
+			}
+		}
+		saveScore();
 	}
 	
 	public void saveScore()
@@ -274,10 +300,13 @@ public class SetController extends TimerTask implements MouseListener {
 			while(myScanner.hasNextLine())
 			{
 				String playerInfo = myScanner.nextLine();
-				String[] info = playerInfo.split(": ");
-				SetPlayer myPlayer = new SetPlayer(Integer.parseInt(info[1]),info[0]);
-				savedPlayers[numPlayers%savedPlayers.length] = myPlayer;
-				numPlayers++;
+				if(!playerInfo.isBlank())
+				{
+					String[] info = playerInfo.split(": ");
+					SetPlayer myPlayer = new SetPlayer(Integer.parseInt(info[1]),info[0]);
+					savedPlayers[numPlayers%savedPlayers.length] = myPlayer;
+					numPlayers++;
+				}
 			}
 			myScanner.close();
 			highScore = SetPlayer.highScore(savedPlayers, numPlayers);
