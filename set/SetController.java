@@ -104,9 +104,17 @@ public class SetController extends TimerTask implements MouseListener {
 	public void resetGame(){  
 		gameIsReady = false;
     	currentCardsOnTable = 0;
-    	startGame(); 
     	score = 0;
     	gameIsReady = true; 
+    	int x = JOptionPane.showConfirmDialog(gameJFrame, "Play again?", null, JOptionPane.YES_NO_OPTION);
+    	if(x==JOptionPane.YES_OPTION)
+    	{
+    		startGame();
+    	}
+    	else
+    	{
+    		System.exit(0);
+    	}
 	}
 		
 	public boolean gameIsReady() {
@@ -188,8 +196,8 @@ public class SetController extends TimerTask implements MouseListener {
 		{
 			System.exit(0);
 		}
-		score = 15;
-		displayFinalScore();
+//		score = 15;
+//		displayFinalScore();
 			
 	}
 	
@@ -697,6 +705,7 @@ public class SetController extends TimerTask implements MouseListener {
 								{
 									// displayScore(); Find another name for displaying/recording at the end of the game
 									// check if user wants to play again with JOptionPane
+									displayFinalScore();
 									resetGame();
 								}
 							}
