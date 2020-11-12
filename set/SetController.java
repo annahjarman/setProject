@@ -32,10 +32,7 @@ public class SetController extends TimerTask implements MouseListener {
 	private JFrame gameJFrame;
     private boolean gameIsReady = false;
     private Timer gameTimer = new java.util.Timer();
-    private int secondsLeft = 30;
-    private int counterBeginner = 30; //arbitrary values
-    private int counterModerate = 20;
-    private int counterExpert = 10;
+    private int secondsLeft;
     //private TimerTask timerLeft = new java.util.TimerTask();
     private SetDeck myDeck;
     final int NUMBER_OF_CARDS = 12;
@@ -46,7 +43,6 @@ public class SetController extends TimerTask implements MouseListener {
 	private int cardXPosition[] = new int[MAX_NUMBER_OF_CARDS];
 	private int cardYPosition[] = new int[MAX_NUMBER_OF_CARDS];
 	private int cardMargin;
-	private int titleBarOffset;
 	private int cardWidth;
 	private int cardHeight;
 	private int noSetWidth;
@@ -59,7 +55,8 @@ public class SetController extends TimerTask implements MouseListener {
 	final int[] numberOfPointsToAdd = {10,5,5};
 	private int selectedCards = 0;
 	private SetCard[] selection = new SetCard[3];
-	private JLabel label = new JLabel();
+	private JLabel scoreLabel = new JLabel();
+	private JLabel timerLabel = new JLabel();
 
 	public SetController() {
 		gameJFrame = new JFrame();
@@ -74,9 +71,7 @@ public class SetController extends TimerTask implements MouseListener {
 		gameJFrame.getContentPane().setLayout(null);
 		gameJFrame.setVisible(true);
 		//timer label
-		gameJFrame.getContentPane().add(label);
-		label.setBounds(90,600,200,400);
-		label.setFont(new Font("Monospaced", Font.PLAIN, 14));
+		//label.setFont(new Font("Monospaced", Font.PLAIN, 14));
 		//score label
 		
 		//Set up display cards
@@ -92,9 +87,12 @@ public class SetController extends TimerTask implements MouseListener {
 		cardXPosition[18] = cardXPosition[19] = cardXPosition[20] = gameJFrame.getWidth()/2 - (7*cardMargin)/2 - 4*cardWidth; // 7th row (for additional cards)
 		
 		noSetWidth = 2*cardWidth + cardMargin;
-		noSetHeight = cardHeight/3;
+		noSetHeight = cardHeight/4;
 		noSetYPosition = 3*cardHeight + 4*cardMargin;
 		noSetXPosition = cardXPosition[0];
+		
+        scoreLabel.setBounds(noSetXPosition,noSetYPosition+noSetHeight/2+cardMargin,noSetWidth,cardHeight/4);
+        timerLabel.setBounds(noSetXPosition,noSetYPosition+noSetHeight+2*cardMargin,noSetWidth,cardHeight/4);
 		
 		noSet = new JButton("No Set On Table");
 		noSet.setFont(new Font("Monospaced", Font.PLAIN, 14)); 
@@ -146,8 +144,10 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	public void run() {
 		secondsLeft--;
-		label.setText("Timer remaining:   " + secondsLeft);
-		label.setVisible(true);
+		gameJFrame.getContentPane().add(timerLabel);
+		timerLabel.setText("Timer remaining:   " + secondsLeft);
+		timerLabel.setFont(new Font("Monospaced", Font.PLAIN, 14));
+		timerLabel.setVisible(true);
 		if (secondsLeft == 0) {
 			gameTimer.cancel();
 			deductPoints();
@@ -178,8 +178,8 @@ public class SetController extends TimerTask implements MouseListener {
 		String thisName = JOptionPane.showInputDialog(gameJFrame,"Enter your name:");
 		if(thisName != null)
 		{
-			 //if(!thisName.isBlank())
-				 if(thisName.length() > 0)
+			 if(!thisName.isBlank())
+				 //if(thisName.length() > 0)
 			{
 				System.out.println("Player name:"+thisName);
 				playerName = thisName;
@@ -259,11 +259,10 @@ public class SetController extends TimerTask implements MouseListener {
 	}
 	
 	public void displayScore() {
-        gameJFrame.getContentPane().add(label);
-       	label.setText("Here is your score: " + score);
-        label.setBounds(noSetXPosition,555,200,400);
-        label.setVisible(true);
-		label.setFont(new Font("Monospaced", Font.PLAIN, 14)); 
+        gameJFrame.getContentPane().add(scoreLabel);
+       	scoreLabel.setText("Here is your score: " + score);
+        scoreLabel.setVisible(true);
+		scoreLabel.setFont(new Font("Monospaced", Font.PLAIN, 14)); 
 		
         // Find window size to allow more cards
         // window listener
