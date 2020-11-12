@@ -25,6 +25,7 @@ public class SetController extends TimerTask implements MouseListener {
 	private int level;
 	private String filename;
 	private String playerName;
+	private SetCard[] hintSet = new SetCard[3];
 	private SetPlayer[] savedPlayers = new SetPlayer[1000];
 	private int numPlayers;
 	final int[] TIME_TO_FIND_SET = {30,20,10}; //30 sec for beginner, 20 sec for moderate, 10 for expert
@@ -44,12 +45,12 @@ public class SetController extends TimerTask implements MouseListener {
     private int currentCardsOnTable;
 	private int cardXPosition[] = new int[MAX_NUMBER_OF_CARDS];
 	private int cardYPosition[] = new int[MAX_NUMBER_OF_CARDS];
-	final int cardMargin = 20;
-	int titleBarOffset = 20;
-	final int cardWidth = 100;
-	final int cardHeight = 200;
-	final int noSetWidth = 3*cardWidth + 2*cardMargin;
-	final int noSetHeight = cardHeight/3;
+	private int cardMargin;
+	private int titleBarOffset;
+	private int cardWidth;
+	private int cardHeight;
+	private int noSetWidth;
+	private int noSetHeight;
 	private int noSetXPosition;
 	private int noSetYPosition;
 	private JButton noSet;
@@ -59,14 +60,16 @@ public class SetController extends TimerTask implements MouseListener {
 	private int selectedCards = 0;
 	private SetCard[] selection = new SetCard[3];
 	private JLabel label = new JLabel();
-	private boolean gotHint = false;
 	
-	
- 
 
 	public SetController() {
 		gameJFrame = new JFrame();
-		gameJFrame.setSize(800,800);//Steve's code for controller*****
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		gameJFrame.setSize(screenSize.width,screenSize.height);
+		cardWidth = gameJFrame.getWidth()/12;
+		cardMargin = cardWidth/6;
+		cardWidth = cardWidth - cardMargin;
+		cardHeight = 2*gameJFrame.getHeight()/9;
 		gameJFrame.setBackground(Color.DARK_GRAY);
 		gameJFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		gameJFrame.getContentPane().setLayout(null);
@@ -77,21 +80,20 @@ public class SetController extends TimerTask implements MouseListener {
 		label.setFont(new Font("Monospaced", Font.PLAIN, 14));
 		//score label
 		
-		
-		//cardWidth =(gameJFrame.getSize().width-4*cardMargin)/3;
-		//cardHeight = (gameJFrame.getSize().width-4*cardMargin-titleBarOffset)/3;
 		//Set up display cards
 		cardYPosition[0] = cardYPosition[3] = cardYPosition[6] = cardYPosition[9] = cardYPosition[12] = cardYPosition[15] = cardYPosition[18] = 0+cardMargin; //1st column
 		cardYPosition[1] = cardYPosition[4] = cardYPosition[7] = cardYPosition[10] = cardYPosition[13] = cardYPosition[16] = cardYPosition[19] = cardHeight + 2*cardMargin; //2nd column
 		cardYPosition[2] = cardYPosition[5] = cardYPosition[8] = cardYPosition[11] = cardYPosition[14] = cardYPosition[17] = cardYPosition[20] = cardHeight* 2 + 3*cardMargin; //3rd column
-		cardXPosition[0] = cardXPosition[1] = cardXPosition[2] = 0+cardMargin + titleBarOffset; //1st row
-		cardXPosition[3] = cardXPosition[4] = cardXPosition[5] = cardWidth + 2*cardMargin + titleBarOffset; //2nd row
-		cardXPosition[6] = cardXPosition[7] = cardXPosition[8] = cardWidth *2 +3*cardMargin + titleBarOffset; //3rd row
-		cardXPosition[9] = cardXPosition[10] = cardXPosition[11] = cardWidth*3 + 4*cardMargin + titleBarOffset; // 4th row
-		cardXPosition[12] = cardXPosition[13] = cardXPosition[14] = cardWidth*4 + 5*cardMargin + titleBarOffset; // 5th row (for additional cards)
-		cardXPosition[15] = cardXPosition[16] = cardXPosition[17] = cardWidth*5 + 6*cardMargin + titleBarOffset; // 6th row (for additional cards)
-		cardXPosition[18] = cardXPosition[19] = cardXPosition[20] = cardWidth*6 + 7*cardMargin + titleBarOffset; // 7th row (for additional cards)
+		cardXPosition[0] = cardXPosition[1] = cardXPosition[2] = gameJFrame.getWidth()/2 - cardMargin/2 - cardWidth; //1st row
+		cardXPosition[3] = cardXPosition[4] = cardXPosition[5] = gameJFrame.getWidth()/2 + cardMargin/2; //2nd row
+		cardXPosition[6] = cardXPosition[7] = cardXPosition[8] = gameJFrame.getWidth()/2 - (3*cardMargin)/2 - 2*cardWidth; //3rd row
+		cardXPosition[9] = cardXPosition[10] = cardXPosition[11] = gameJFrame.getWidth()/2 + (3*cardMargin)/2 + cardWidth; // 4th row
+		cardXPosition[12] = cardXPosition[13] = cardXPosition[14] = gameJFrame.getWidth()/2 - (5*cardMargin)/2 - 3*cardWidth; // 5th row (for additional cards)
+		cardXPosition[15] = cardXPosition[16] = cardXPosition[17] = gameJFrame.getWidth()/2 + (5*cardMargin)/2 + 2*cardWidth; // 6th row (for additional cards)
+		cardXPosition[18] = cardXPosition[19] = cardXPosition[20] = gameJFrame.getWidth()/2 - (7*cardMargin)/2 - 4*cardWidth; // 7th row (for additional cards)
 		
+		noSetWidth = 2*cardWidth + cardMargin;
+		noSetHeight = cardHeight/3;
 		noSetYPosition = 3*cardHeight + 4*cardMargin;
 		noSetXPosition = cardXPosition[0];
 		
@@ -118,28 +120,28 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	public void resetGame(){  
 		gameIsReady = false;
-    	currentCardsOnTable = 0;
-    	score = 0;
-    	gameIsReady = true; 
-    	int x = JOptionPane.showConfirmDialog(gameJFrame, "Play again?", null, JOptionPane.YES_NO_OPTION);
-    	if(x==JOptionPane.YES_OPTION)
-    	{
-    		startGame();
-    	}
-    	else
-    	{
-    		System.exit(0);
-    	}
-	}
-		
+		currentCardsOnTable = 0;
+		score = 0;
+		gameIsReady = true; 
+		int x = JOptionPane.showConfirmDialog(gameJFrame, "Play again?", null, JOptionPane.YES_NO_OPTION);
+		if(x==JOptionPane.YES_OPTION)
+		{
+			startGame();
+		}
+		else
+		{
+			System.exit(0);
+		}
+		}
+
 	public boolean gameIsReady() {
 		return gameIsReady;
-		
+
 	}
-	
+
 	public boolean cardsOnTable() {
-		return gameIsReady;
-		
+		return currentCardsOnTable > 0;
+
 	}
 	
 	
@@ -260,7 +262,7 @@ public class SetController extends TimerTask implements MouseListener {
 	public void displayScore() {
         gameJFrame.getContentPane().add(label);
        	label.setText("Here is your score: " + score);
-        label.setBounds(90,555,200,400);
+        label.setBounds(noSetXPosition,555,200,400);
         label.setVisible(true);
 		label.setFont(new Font("Monospaced", Font.PLAIN, 14)); 
 		
@@ -348,7 +350,7 @@ public class SetController extends TimerTask implements MouseListener {
 			while(myScanner.hasNextLine())
 			{
 				String playerInfo = myScanner.nextLine();
-				 //if(!thisName.isBlank())
+				 if(!playerInfo.isBlank())
 					 //if(thisName.length() > 0)
 				{
 					String[] info = playerInfo.split(": ");
@@ -425,15 +427,15 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	public void getHint()
 	{
-		for(int i = 0; i < MAX_NUMBER_OF_CARDS-2; i++)
+		for(int i = 0; i < currentCardsOnTable-5; i++)
 		{
 			if(cardOnTable[i] != null)
 			{
-				for(int j = i+1; j < MAX_NUMBER_OF_CARDS-1; j++)
+				for(int j = i+1; j < currentCardsOnTable-4; j++)
 				{
 					if(cardOnTable[j] != null)
 					{
-						for(int k = j+1; k < MAX_NUMBER_OF_CARDS; k++)
+						for(int k = j+1; k < currentCardsOnTable-3; k++)
 						{
 							if(cardOnTable[k] != null)
 							{
@@ -443,10 +445,14 @@ public class SetController extends TimerTask implements MouseListener {
 								theseCards[2] = cardOnTable[k];
 								if(areTheseASet(theseCards))
 								{
-									for(int m = 0; m < theseCards.length; m++)
+									hintSet[0] = theseCards[0];
+									theseCards[0].highlight();
+									theseCards[0].redrawCard();
+									if(level == BEGINNER)
 									{
-										theseCards[m].highlight();
-										theseCards[m].redrawCard();
+										hintSet[1] = theseCards[1];
+										theseCards[1].highlight();
+										theseCards[1].redrawCard();										
 									}
 									i = MAX_NUMBER_OF_CARDS;
 									j = MAX_NUMBER_OF_CARDS;
@@ -458,7 +464,6 @@ public class SetController extends TimerTask implements MouseListener {
 				}
 			}
 		}
-		gotHint = true;
 	}
 	
 	public boolean areTheseASet(SetCard[] myCards) {
@@ -535,9 +540,18 @@ public class SetController extends TimerTask implements MouseListener {
 		}
 		else
 		{
-			addCards();
+			if(myDeck.cardsLeft() > 0)
+			{
+				addCards();
+			}
+			else
+			{
+				displayFinalScore();
+				resetGame();
+			}
 			// reset timer when added
 		}
+		restartTimer();
 	}
 	
 	public void dealLevel()
@@ -545,10 +559,7 @@ public class SetController extends TimerTask implements MouseListener {
 		if(level != EXPERT)
 		{
 			addCards();
-			if(level == BEGINNER)
-			{
-				getHint();
-			}
+			getHint();
 		}
 		displayScore();
 	}
@@ -567,6 +578,7 @@ public class SetController extends TimerTask implements MouseListener {
 			}
 			drawDisplayCard();
 		}
+		displayScore();
 	}
 	
 	public SetCard getSelectedCard(int xCoord,int yCoord)
@@ -605,6 +617,7 @@ public class SetController extends TimerTask implements MouseListener {
 		{
 			selection[1] = null;
 		}
+		selectedCards--;
 	}
 	
 	public void userFoundASet()
@@ -704,17 +717,18 @@ public class SetController extends TimerTask implements MouseListener {
 	public void mousePressed(MouseEvent e) {
 		if(gameIsReady)
 		{
-//			if(gotHint)
-//			{
-//				for(int i = 0; i < MAX_NUMBER_OF_CARDS; i++)
-//				{
-//					if(cardOnTable[i].isSelected())
-//					{
-//						cardOnTable[i].deselectCard();
-//					}
-//				}
-//			}
-			gotHint = false;
+			if(hintSet[0]!=null)
+			{
+				for(int i = 0; i < hintSet.length; i++)
+				{
+					if(hintSet[i] != null)
+					{
+						hintSet[i].deselectCard();
+						hintSet[i].redrawCard();
+						hintSet[i] = null;
+					}
+				}
+			}
 			SetCard selected = getSelectedCard(e.getX(),e.getY());
 			System.out.println(selected);
 			if(selected != null)
