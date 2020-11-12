@@ -1,8 +1,9 @@
 package set;
+
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.BorderFactory;
+import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 
@@ -68,8 +69,8 @@ public class SetCard {
 		//this.visible = false;
 		frameToDraw.getContentPane().add(labelToDraw);
 		labelToDraw.setVisible(true);
-		frameToDraw.setVisible(false);
-		frameToDraw.setVisible(true);
+		//frameToDraw.setVisible(false);
+		//frameToDraw.setVisible(true);
 		//this.visible = true;
 	}
 	
