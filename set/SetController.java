@@ -28,10 +28,15 @@ public class SetController extends TimerTask implements MouseListener {
 	private SetCard[] hintSet = new SetCard[3];
 	private SetPlayer[] savedPlayers = new SetPlayer[1000];
 	private int numPlayers;
-	final int[] TIME_TO_FIND_SET = {30000,20000,10000}; //30 sec for beginner, 20 sec for moderate, 10 for expert
+	final int[] TIME_TO_FIND_SET = {30,20,10}; //30 sec for beginner, 20 sec for moderate, 10 for expert
 	private JFrame gameJFrame;
     private boolean gameIsReady = false;
     private Timer gameTimer = new java.util.Timer();
+    private int secondsLeft = 30;
+    private int counterBeginner = 30; //arbitrary values
+    private int counterModerate = 20;
+    private int counterExpert = 10;
+    //private TimerTask timerLeft = new java.util.TimerTask();
     private SetDeck myDeck;
     final int NUMBER_OF_CARDS = 12;
 	final int MAX_NUMBER_OF_CARDS = 21;
@@ -41,7 +46,7 @@ public class SetController extends TimerTask implements MouseListener {
 	private int cardXPosition[] = new int[MAX_NUMBER_OF_CARDS];
 	private int cardYPosition[] = new int[MAX_NUMBER_OF_CARDS];
 	private int cardMargin;
-	int titleBarOffset = 20;
+	private int titleBarOffset;
 	private int cardWidth;
 	private int cardHeight;
 	private int noSetWidth;
@@ -68,6 +73,12 @@ public class SetController extends TimerTask implements MouseListener {
 		gameJFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		gameJFrame.getContentPane().setLayout(null);
 		gameJFrame.setVisible(true);
+		//timer label
+		gameJFrame.getContentPane().add(label);
+		label.setBounds(90,600,200,400);
+		label.setFont(new Font("Monospaced", Font.PLAIN, 14));
+		//score label
+		
 		//Set up display cards
 		cardYPosition[0] = cardYPosition[3] = cardYPosition[6] = cardYPosition[9] = cardYPosition[12] = cardYPosition[15] = cardYPosition[18] = 0+cardMargin; //1st column
 		cardYPosition[1] = cardYPosition[4] = cardYPosition[7] = cardYPosition[10] = cardYPosition[13] = cardYPosition[16] = cardYPosition[19] = cardHeight + 2*cardMargin; //2nd column
@@ -108,34 +119,57 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	public void resetGame(){  
 		gameIsReady = false;
-    	currentCardsOnTable = 0;
-    	score = 0;
-    	gameIsReady = true; 
-    	int x = JOptionPane.showConfirmDialog(gameJFrame, "Play again?", null, JOptionPane.YES_NO_OPTION);
-    	if(x==JOptionPane.YES_OPTION)
-    	{
-    		startGame();
-    	}
-    	else
-    	{
-    		System.exit(0);
-    	}
-	}
-		
+		currentCardsOnTable = 0;
+		score = 0;
+		gameIsReady = true; 
+		int x = JOptionPane.showConfirmDialog(gameJFrame, "Play again?", null, JOptionPane.YES_NO_OPTION);
+		if(x==JOptionPane.YES_OPTION)
+		{
+			startGame();
+		}
+		else
+		{
+			System.exit(0);
+		}
+		}
+
 	public boolean gameIsReady() {
 		return gameIsReady;
-		
+
 	}
-	
+
 	public boolean cardsOnTable() {
-		return gameIsReady;
-		
+		return currentCardsOnTable > 0;
+
 	}
 	
 	
 	public void run() {
+		secondsLeft--;
+		label.setText("Timer remaining:   " + secondsLeft);
+		label.setVisible(true);
+		if (secondsLeft == 0) {
+			gameTimer.cancel();
+			deductPoints();
+			
+		JOptionPane.showMessageDialog(gameJFrame,"Timer went off!","BUMMER! You lost points!",JOptionPane.WARNING_MESSAGE);	
 		System.out.println("Timer went off!");
+		System.out.println("BUMMER! You lost points!");
+		restartTimer();
 	}
+}
+	
+	public void restartTimer() {
+	  gameTimer = new Timer();
+ //needs work
+	  
+       }
+
+	//class List implements ActionListener {
+	    //@Override
+	    //public void actionPerformed(ActionEvent e)
+			
+
 	
 	public void startGame() {
 		gameIsReady = false;
@@ -144,7 +178,8 @@ public class SetController extends TimerTask implements MouseListener {
 		String thisName = JOptionPane.showInputDialog(gameJFrame,"Enter your name:");
 		if(thisName != null)
 		{
-			if(!thisName.isBlank())
+			 //if(!thisName.isBlank())
+				 if(thisName.length() > 0)
 			{
 				System.out.println("Player name:"+thisName);
 				playerName = thisName;
@@ -165,6 +200,7 @@ public class SetController extends TimerTask implements MouseListener {
 		if(x >= 0 && x <= 2)
 		{
 			level = this.levels[x];
+			secondsLeft = TIME_TO_FIND_SET[level];
 			filename = "src/set/scores/"+levelName[level]+".txt";
 			//System.out.println(getHighScore().toString());
 			//saveScore();
@@ -192,8 +228,8 @@ public class SetController extends TimerTask implements MouseListener {
 			System.out.println("All Dealt");
 			drawDisplayCard();
 			System.out.println("Cards Displayed");
-			//displayScore();
-			//gameTimer.schedule(this, (long)0, (long)TIME_TO_FIND_SET);
+			displayScore();
+			gameTimer.schedule(this,(long)0,1000);
 			gameIsReady = true;
 			gameJFrame.addMouseListener(this);
 		}
@@ -225,7 +261,7 @@ public class SetController extends TimerTask implements MouseListener {
 	public void displayScore() {
         gameJFrame.getContentPane().add(label);
        	label.setText("Here is your score: " + score);
-        label.setBounds(noSetXPosition,550,200,400);
+        label.setBounds(noSetXPosition,555,200,400);
         label.setVisible(true);
 		label.setFont(new Font("Monospaced", Font.PLAIN, 14)); 
 		
@@ -313,7 +349,8 @@ public class SetController extends TimerTask implements MouseListener {
 			while(myScanner.hasNextLine())
 			{
 				String playerInfo = myScanner.nextLine();
-				if(!playerInfo.isBlank())
+				 if(!playerInfo.isBlank())
+					 //if(thisName.length() > 0)
 				{
 					String[] info = playerInfo.split(": ");
 					SetPlayer myPlayer = new SetPlayer(Integer.parseInt(info[1]),info[0]);
@@ -513,6 +550,7 @@ public class SetController extends TimerTask implements MouseListener {
 			}
 			// reset timer when added
 		}
+		restartTimer();
 	}
 	
 	public void dealLevel()
@@ -746,10 +784,11 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	public static void main(String[] args) {
 		System.out.println("Starting Main");
-		//SetController myGame = new SetController();
-		new SetController();
+		SetController myGame = new SetController();
+	
 		
 	}
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -763,13 +802,12 @@ public class SetController extends TimerTask implements MouseListener {
 	}
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
+		gameJFrame.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		
 	}
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		gameJFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
 	
 	}
