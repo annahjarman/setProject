@@ -148,28 +148,33 @@ public class SetController extends TimerTask implements MouseListener {
 		timerLabel.setText("Timer remaining:   " + secondsLeft);
 		timerLabel.setFont(new Font("Monospaced", Font.PLAIN, 14));
 		timerLabel.setVisible(true);
-		if (secondsLeft == 0) {
-			gameTimer.cancel();
+		if (secondsLeft <= 0) {
+			JOptionPane.showMessageDialog(gameJFrame,"BUMMER! You lost points!","Timer went off!",JOptionPane.WARNING_MESSAGE);	
+			System.out.println("Timer went off!");
+			System.out.println("BUMMER! You lost points!");
 			deductPoints();
-			
-		JOptionPane.showMessageDialog(gameJFrame,"Timer went off!","BUMMER! You lost points!",JOptionPane.WARNING_MESSAGE);	
-		System.out.println("Timer went off!");
-		System.out.println("BUMMER! You lost points!");
-		restartTimer();
-	}
+			displayScore();
+			restartTimer();
+			timerLabel.setText("Timer remaining:   " + secondsLeft);
+		}
+		
 }
 	
 	public void restartTimer() {
-		gameTimer = new Timer();
- //needs work
-	  
-       }
+			secondsLeft = TIME_TO_FIND_SET[level];
+		    System.out.println("Time left = " + secondsLeft);
+	    }
 
 	//class List implements ActionListener {
 	    //@Override
 	    //public void actionPerformed(ActionEvent e)
 			
 
+	//is the game ready?
+	//user has to click message/button 
+	//time keeps going 
+	//once user accpets message 
+	//game is now ready with remaining time
 	
 	public void startGame() {
 		gameIsReady = false;
@@ -178,8 +183,8 @@ public class SetController extends TimerTask implements MouseListener {
 		String thisName = JOptionPane.showInputDialog(gameJFrame,"Enter your name:");
 		if(thisName != null)
 		{
-			 if(!thisName.isBlank())
-				 //if(thisName.length() > 0)
+			 //if(!thisName.isBlank())
+				 if(thisName.length() > 0)
 			{
 				System.out.println("Player name:"+thisName);
 				playerName = thisName;
