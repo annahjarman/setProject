@@ -160,7 +160,7 @@ public class SetController extends TimerTask implements MouseListener {
 }
 	
 	public void restartTimer() {
-	  gameTimer = new Timer();
+		gameTimer = new Timer();
  //needs work
 	  
        }
@@ -237,8 +237,6 @@ public class SetController extends TimerTask implements MouseListener {
 		{
 			System.exit(0);
 		}
-//		score = 15;
-//		displayFinalScore();
 			
 	}
 	
@@ -650,7 +648,6 @@ public class SetController extends TimerTask implements MouseListener {
 				{
 					cardOnTable[i].undrawCard();
 					cardOnTable[i] = null;
-//					currentCardsOnTable--;
 					i = cardOnTable.length;
 				}
 			}
@@ -749,6 +746,7 @@ public class SetController extends TimerTask implements MouseListener {
 							if(myDeck.cardsLeft() > 0)
 							{
 								dealCards();
+								restartTimer();
 							}
 							else
 							{
@@ -767,6 +765,7 @@ public class SetController extends TimerTask implements MouseListener {
 							deductPoints();
 							System.out.println("Score: "+score);
 							deselectTheseCards();
+							restartTimer();
 						}
 					}
 				}
