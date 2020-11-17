@@ -10,10 +10,19 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.awt.font.*;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
 
 public class SetController extends TimerTask implements MouseListener {
 	
@@ -21,7 +30,7 @@ public class SetController extends TimerTask implements MouseListener {
 	final int INTERMEDIATE = 1;
 	final int EXPERT = 2;
 	final int[] levels = {BEGINNER,INTERMEDIATE,EXPERT};
-	final String[] levelName = {"Beginner","Moderate","Expert"};
+	final String[] levelName = {"Beginner","Intermediate","Expert"};
 	private int level;
 	private String filename;
 	private String playerName;
@@ -57,6 +66,13 @@ public class SetController extends TimerTask implements MouseListener {
 	private SetCard[] selection = new SetCard[3];
 	private JLabel scoreLabel = new JLabel();
 	private JLabel timerLabel = new JLabel();
+	private JLabel loserLabel = new JLabel();
+	private JLabel winnerLabel = new JLabel();
+	AudioInputStream audioStream;
+	AudioFormat format;
+	DataLine.Info info;
+	Clip audioClip;
+	
 
 	public SetController() {
 		gameJFrame = new JFrame();
@@ -93,7 +109,9 @@ public class SetController extends TimerTask implements MouseListener {
 		
         scoreLabel.setBounds(noSetXPosition,noSetYPosition+noSetHeight/2+cardMargin,noSetWidth,cardHeight/4);
         timerLabel.setBounds(noSetXPosition,noSetYPosition+noSetHeight+2*cardMargin,noSetWidth,cardHeight/4);
-		
+        loserLabel.setBounds(gameJFrame.getWidth()/2 - cardMargin/2 - cardWidth, cardHeight + 2*cardMargin, noSetWidth,cardHeight/4);
+		winnerLabel.setBounds(gameJFrame.getWidth()/2 - cardMargin/2 - cardWidth, cardHeight + 2*cardMargin, noSetWidth,cardHeight/4);
+        
 		noSet = new JButton("No Set On Table");
 		noSet.setFont(new Font("Monospaced", Font.PLAIN, 14)); 
 		noSet.setBounds(noSetXPosition,noSetYPosition,noSetWidth,noSetHeight);
@@ -145,25 +163,51 @@ public class SetController extends TimerTask implements MouseListener {
 	public void run() {
 		secondsLeft--;
 		gameJFrame.getContentPane().add(timerLabel);
+		gameJFrame.getContentPane().add(loserLabel);
+		//gameJFrame.setIconImage("src/iconImage/SetQuestionMark");
 		timerLabel.setText("Timer remaining:   " + secondsLeft);
 		timerLabel.setFont(new Font("Monospaced", Font.PLAIN, 14));
 		timerLabel.setVisible(true);
-		if (secondsLeft <= 0) {
-			JOptionPane.showMessageDialog(gameJFrame,"BUMMER! You lost points!","Timer went off!",JOptionPane.WARNING_MESSAGE);	
+		if (secondsLeft <= 0) /*/&& (level == BEGINNER))/*/ {
+			if ((level == BEGINNER) && (level == INTERMEDIATE)) {
+				System.out.println("Sound2");
+				startSounds("src/sounds/gamePlayBooing.aiff");
+				}	
+			loserLabel.setVisible(true);
+			JOptionPane.showMessageDialog(gameJFrame,"BUMMER! You lost points!","Timer went off!",JOptionPane.PLAIN_MESSAGE);
+			//add image
 			System.out.println("Timer went off!");
 			System.out.println("BUMMER! You lost points!");
 			deductPoints();
 			displayScore();
 			restartTimer();
 			timerLabel.setText("Timer remaining:   " + secondsLeft);
+			loserLabel.setVisible(false);
+			} 
+			else {
+				if(secondsLeft == 10) {
+					System.out.println("Sound1");
+					startSounds("src/sounds/gamePlay10secLeft.aiff");
+					 if(level == INTERMEDIATE){
+						System.out.println("Sound3");
+						startSounds("src/sounds/gamePlayHeartbeat.aiff"); 
+					 }
+				}else {
+					if((secondsLeft == 5) && (level == EXPERT)) {
+							System.out.println("Sound3");
+							//startMusic("src/music/gamePlayLowScore.aiff");
+							//new sound to play
+						 }
+				
 		}
-		
+	}
 }
 	
 	public void restartTimer() {
-			secondsLeft = TIME_TO_FIND_SET[level];
-		    System.out.println("Time left = " + secondsLeft);
-	    }
+		secondsLeft = TIME_TO_FIND_SET[level];
+	    System.out.println("Time left = " + secondsLeft);
+	  
+       }
 
 	//class List implements ActionListener {
 	    //@Override
@@ -176,10 +220,76 @@ public class SetController extends TimerTask implements MouseListener {
 	//once user accpets message 
 	//game is now ready with remaining time
 	
+	
+	public void startMusic(String audioFilePath) {
+		File audioFile = new File(audioFilePath);
+		try {
+			audioStream = AudioSystem.getAudioInputStream(audioFile);
+			format = audioStream.getFormat();
+			info = new DataLine.Info(Clip.class, format);
+			audioClip = (Clip) AudioSystem.getLine(info);
+			audioClip.open(audioStream);
+			audioClip.start();
+			
+		
+		} catch (UnsupportedAudioFileException ex) {
+	        System.out.println("The specified audio file is not supported.");
+	        ex.printStackTrace();
+	    } catch (LineUnavailableException ex) {
+	        System.out.println("Audio line for playing back is unavailable.");
+	        ex.printStackTrace();
+	    } catch (IOException ex) {
+	        System.out.println("Error playing the audio file.");
+	        ex.printStackTrace();
+	    }
+	     
+	}
+	
+	public void stopMusic() {
+		audioClip.close();
+		//AudioPlayer.player.stop(sound);
+	}
+	
+	public void startSounds(String audioFilePath) {
+		File audioFile = new File(audioFilePath);
+		try {
+			audioStream = AudioSystem.getAudioInputStream(audioFile);
+			format = audioStream.getFormat();
+			info = new DataLine.Info(Clip.class, format);
+			audioClip = (Clip) AudioSystem.getLine(info);
+			audioClip.open(audioStream);
+			audioClip.start();
+			//AudioData data = new AudioData (new audioFilePath)).getData();
+			//ContinuousAudioDataStream sound = new ContinuousAudioDataStream(audioFile);
+			//AudioPlayer.player.start(sound);
+		
+		} catch (UnsupportedAudioFileException ex) {
+	        System.out.println("The specified audio file is not supported.");
+	        ex.printStackTrace();
+	    } catch (LineUnavailableException ex) {
+	        System.out.println("Audio line for playing back is unavailable.");
+	        ex.printStackTrace();
+	    } catch (IOException ex) {
+	        System.out.println("Error playing the audio file.");
+	        ex.printStackTrace();
+	    }
+	     
+	}
+		
+		
+	
+	
+	public void stopSounds() {
+		audioClip.close();
+	}
+	
+	
 	public void startGame() {
 		gameIsReady = false;
 
 		// Player name entry
+		
+		startMusic("src/music/gamePlayJungle.aiff");
 		String thisName = JOptionPane.showInputDialog(gameJFrame,"Enter your name:");
 		if(thisName != null)
 		{
@@ -241,7 +351,10 @@ public class SetController extends TimerTask implements MouseListener {
 		else
 		{
 			System.exit(0);
+			audioClip.close();
 		}
+//		score = 15;
+//		displayFinalScore();
 			
 	}
 	
@@ -653,6 +766,7 @@ public class SetController extends TimerTask implements MouseListener {
 				{
 					cardOnTable[i].undrawCard();
 					cardOnTable[i] = null;
+//					currentCardsOnTable--;
 					i = cardOnTable.length;
 				}
 			}
@@ -751,7 +865,6 @@ public class SetController extends TimerTask implements MouseListener {
 							if(myDeck.cardsLeft() > 0)
 							{
 								dealCards();
-								restartTimer();
 							}
 							else
 							{
@@ -770,7 +883,6 @@ public class SetController extends TimerTask implements MouseListener {
 							deductPoints();
 							System.out.println("Score: "+score);
 							deselectTheseCards();
-							restartTimer();
 						}
 					}
 				}
@@ -788,6 +900,7 @@ public class SetController extends TimerTask implements MouseListener {
 	public static void main(String[] args) {
 		System.out.println("Starting Main");
 		SetController myGame = new SetController();
+		
 	
 		
 	}
