@@ -4,6 +4,7 @@ import javax.swing.JLabel;// for JLabel
 import javax.swing.JButton;
 import javax.swing.JOptionPane; // messages are displayed using JOptionPane
 import javax.swing.ImageIcon; // messages have an icon
+import java.awt.Image;
 import java.awt.*; // for graphics & MouseListener 
 import java.awt.event.*; // need for events and MouseListener
 import java.util.Timer;
@@ -164,14 +165,14 @@ public class SetController extends TimerTask implements MouseListener {
 		secondsLeft--;
 		gameJFrame.getContentPane().add(timerLabel);
 		gameJFrame.getContentPane().add(loserLabel);
-		//gameJFrame.setIconImage("src/iconImage/SetQuestionMark");
+		//gameJFrame.setIconImage(new ImageIcon("src/iconImage/SetQuestionMark"));
 		timerLabel.setText("Timer remaining:   " + secondsLeft);
 		timerLabel.setFont(new Font("Monospaced", Font.PLAIN, 14));
 		timerLabel.setVisible(true);
 		if (secondsLeft <= 0) /*/&& (level == BEGINNER))/*/ {
-			if ((level == BEGINNER) && (level == INTERMEDIATE)) {
+			if (level < EXPERT) {
 				System.out.println("Sound2");
-				startSounds("src/sounds/gamePlayBooing.aiff");
+				//startSounds("src/sounds/gamePlayBooing.aiff");
 				}	
 			loserLabel.setVisible(true);
 			JOptionPane.showMessageDialog(gameJFrame,"BUMMER! You lost points!","Timer went off!",JOptionPane.PLAIN_MESSAGE);
@@ -187,10 +188,10 @@ public class SetController extends TimerTask implements MouseListener {
 			else {
 				if(secondsLeft == 10) {
 					System.out.println("Sound1");
-					startSounds("src/sounds/gamePlay10secLeft.aiff");
+					//startSounds("src/sounds/gamePlay10secLeft.aiff");
 					 if(level == INTERMEDIATE){
 						System.out.println("Sound3");
-						startSounds("src/sounds/gamePlayHeartbeat.aiff"); 
+						//startSounds("src/sounds/gamePlayHeartbeat.aiff"); 
 					 }
 				}else {
 					if((secondsLeft == 5) && (level == EXPERT)) {
@@ -199,9 +200,9 @@ public class SetController extends TimerTask implements MouseListener {
 							//new sound to play
 						 }
 				
-		}
+				}	
+			}
 	}
-}
 	
 	public void restartTimer() {
 		secondsLeft = TIME_TO_FIND_SET[level];
@@ -284,78 +285,79 @@ public class SetController extends TimerTask implements MouseListener {
 	}
 	
 	
+	public int instructions()
+	{
+		String instructions = "Welcome to Set!\nTest your wits against the clock as you race to find as many sets as possible.\nHere's how it works:\nSelect three cards you think make a set, or if you think there's no set on the table, press the 'No Set on Table' button. So what is a set, exactly?\nThere are 4 different attributes to the cards; shape, color, fill, and number. There are three of each attribute to the cards, as listed below.\n-> Shape: diamonds, squiggles, ovals\n-> Color: red, purple, green\n-> Fill: gradient, solid, open\n-> Number: one, two, three\nA set is made up of three cards where, for every single attribute, all three of the cards are the same or all three are different. For example, looking\nspecifically at color, if the first card was red, all three would have to be red, or the other cards would have to be purple and green. And again, for\nthree cards to be a set, they have to all be the same or all be different in EVERY ATTRIBUTE. All four.\nReady? Of course you are. Let's get started!";
+		int z = JOptionPane.showConfirmDialog(gameJFrame,instructions,"Instructions",JOptionPane.OK_CANCEL_OPTION);
+		return z;
+	}
+	
 	public void startGame() {
 		gameIsReady = false;
 
 		// Player name entry
-		
-		startMusic("src/music/gamePlayJungle.aiff");
-		String thisName = JOptionPane.showInputDialog(gameJFrame,"Enter your name:");
-		if(thisName != null)
+		if(instructions()==JOptionPane.OK_OPTION)
 		{
-			 //if(!thisName.isBlank())
-				 if(thisName.length() > 0)
+			//startMusic("src/music/gamePlayJungle.aiff");
+			String thisName = JOptionPane.showInputDialog(gameJFrame,"Enter your name:");
+			if(thisName != null)
 			{
-				System.out.println("Player name:"+thisName);
-				playerName = thisName;
+				if(thisName.length() > 0)
+				{
+					playerName = thisName;
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(gameJFrame,"Please try again with non-blank name!","Error",JOptionPane.ERROR_MESSAGE);
+					System.exit(0);
+				}
 			}
 			else
 			{
-				JOptionPane.showMessageDialog(gameJFrame,"Please try again with non-blank name!","Error",JOptionPane.ERROR_MESSAGE);
 				System.exit(0);
 			}
-		}
-		else
-		{
-			System.exit(0);
-		}
-			
-		// Level selection
-		int x = JOptionPane.showOptionDialog(gameJFrame, "Pick your level!", "Level Selection", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, levelName, levelName[0]);
-		if(x >= 0 && x <= 2)
-		{
-			level = this.levels[x];
-			secondsLeft = TIME_TO_FIND_SET[level];
-			filename = "src/set/scores/"+levelName[level]+".txt";
-			//System.out.println(getHighScore().toString());
-			//saveScore();
-			System.out.println("My level: "+level);
-		}
-		else
-		{
-			System.exit(0);
-		}
-		
-		// Good luck message
-		int y = JOptionPane.showConfirmDialog(gameJFrame, "Off we go!", "Ready?", JOptionPane.OK_CANCEL_OPTION);
-		
-		if(y==JOptionPane.OK_OPTION)
-		{
-			myDeck = new SetDeck(gameJFrame,cardWidth,cardHeight); //creates instance of class, go run const.
-			System.out.println(gameJFrame);
-			myDeck.shuffle();
-			System.out.println("Shuffled");
-			currentCardsOnTable = 0;
-			for(int i = 0; i < NUMBER_OF_CARDS; i++) {
-				cardOnTable[i] = myDeck.deal();
-				System.out.println("Dealing "+cardOnTable[i].getNumber()+" of "+cardOnTable[i].getFill());
+				
+			// Level selection
+			int x = JOptionPane.showOptionDialog(gameJFrame, "Pick your level!", "Level Selection", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, levelName, levelName[0]);
+			if(x >= 0 && x <= 2)
+			{
+				level = this.levels[x];
+				secondsLeft = TIME_TO_FIND_SET[level];
+				filename = "src/set/scores/"+levelName[level]+".txt";
 			}
-			System.out.println("All Dealt");
-			drawDisplayCard();
-			System.out.println("Cards Displayed");
-			displayScore();
-			gameTimer.schedule(this,(long)0,1000);
-			gameIsReady = true;
-			gameJFrame.addMouseListener(this);
+			else
+			{
+				System.exit(0);
+			}
+			
+			// Good luck message
+			int y = JOptionPane.showConfirmDialog(gameJFrame, "Off we go!", "Ready?", JOptionPane.OK_CANCEL_OPTION);
+			
+			if(y==JOptionPane.OK_OPTION)
+			{
+				myDeck = new SetDeck(gameJFrame,cardWidth,cardHeight);
+				myDeck.shuffle();
+				currentCardsOnTable = 0;
+				for(int i = 0; i < NUMBER_OF_CARDS; i++) {
+					cardOnTable[i] = myDeck.deal();
+					System.out.println("Dealing "+cardOnTable[i].getNumber()+" of "+cardOnTable[i].getFill());
+				}
+				drawDisplayCard();
+				displayScore();
+				gameTimer.schedule(this,(long)0,1000);
+				gameIsReady = true;
+				gameJFrame.addMouseListener(this);
+			}
+			else
+			{
+				System.exit(0);
+				audioClip.close();
+			}
 		}
 		else
 		{
 			System.exit(0);
-			audioClip.close();
 		}
-//		score = 15;
-//		displayFinalScore();
-			
 	}
 	
 	public void dealCards() {
@@ -666,6 +668,7 @@ public class SetController extends TimerTask implements MouseListener {
 			// reset timer when added
 		}
 		restartTimer();
+		gameTimer.schedule(this,(long)0,1000);
 	}
 	
 	public void dealLevel()
@@ -855,7 +858,6 @@ public class SetController extends TimerTask implements MouseListener {
 					{
 						selectedCards = 0;
 						System.out.println(areTheseASet(selection));
-						//deselectTheseCards();
 						if(areTheseASet(selection))
 						{
 							addPoints();
@@ -884,6 +886,7 @@ public class SetController extends TimerTask implements MouseListener {
 							System.out.println("Score: "+score);
 							deselectTheseCards();
 						}
+						restartTimer();
 					}
 				}
 				else
