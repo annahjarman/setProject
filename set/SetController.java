@@ -80,6 +80,10 @@ public class SetController extends TimerTask implements MouseListener {
 	private SetAudio play2;
 	private SetAudio jungle;
 	private SetAudio neutral;
+	private SetAudio fiveSecLeft;
+	private SetAudio buzzer;
+	private ImageIcon loserImage;
+	private ImageIcon winImage;
 	
 
 	public SetController() {
@@ -95,9 +99,19 @@ public class SetController extends TimerTask implements MouseListener {
 		gameJFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		gameJFrame.getContentPane().setLayout(null);
 		gameJFrame.setVisible(true);
-		//timer label
-		//label.setFont(new Font("Monospaced", Font.PLAIN, 14));
-		//score label
+		loserImage = new ImageIcon("src/iconImage/SetLoser.jpg"); 
+		winImage =new ImageIcon("src/iconImage/SetWin.jpg");
+		loserLabel.setIcon(loserImage);
+		winnerLabel.setIcon(winImage);
+		//gameJFrame.getContentPane().add(loserLabel);
+		//gameJFrame.getContentPane().add(winnerLabel);
+		//loserLabel.setBounds(200,200,800,800);
+		//winnerLabel.setBounds(200,200,800,800);
+		//loserLabel.setFont(new Font("Monospaced",Font.BOLD, 16));
+		//loserLabel.setText("Do you know how yo play? Did you see the set? BIG GIANT LOSER, WOW!");
+		//loserLabel.setVisible(true);
+		//winnerLabel.setVisible(true);
+		
 		
 		//Set up display cards
 		cardYPosition[0] = cardYPosition[3] = cardYPosition[6] = cardYPosition[9] = cardYPosition[12] = cardYPosition[15] = cardYPosition[18] = 0+cardMargin; //1st column
@@ -118,8 +132,11 @@ public class SetController extends TimerTask implements MouseListener {
 		
         scoreLabel.setBounds(noSetXPosition,noSetYPosition+noSetHeight/2+cardMargin,noSetWidth,cardHeight/4);
         timerLabel.setBounds(noSetXPosition,noSetYPosition+noSetHeight+2*cardMargin,noSetWidth,cardHeight/4);
-        loserLabel.setBounds(gameJFrame.getWidth()/2 - cardMargin/2 - cardWidth, cardHeight + 2*cardMargin, noSetWidth,cardHeight/4);
-		winnerLabel.setBounds(gameJFrame.getWidth()/2 - cardMargin/2 - cardWidth, cardHeight + 2*cardMargin, noSetWidth,cardHeight/4);
+        //loserLabel.setBounds(gameJFrame.getWidth()/2 - cardMargin/2 - cardWidth, cardHeight + 2*cardMargin, noSetWidth*4,cardHeight*4);
+		//winnerLabel.setBounds(gameJFrame.getWidth()/2 - cardMargin/2 - cardWidth, cardHeight + 2*cardMargin, noSetWidth*4,cardHeight*4);
+        //loserLabel.setBounds(0,0,800,800);
+		//winnerLabel.setBounds(200,200,800,800);
+		
         
 		noSet = new JButton("No Set On Table");
 		noSet.setFont(new Font("Monospaced", Font.PLAIN, 14)); 
@@ -150,6 +167,9 @@ public class SetController extends TimerTask implements MouseListener {
 		play2 = new SetAudio("src/music/gamePlay2.wav");
 		jungle = new SetAudio("src/music/gamePlayJungle.wav");
 		neutral = new SetAudio("src/music/gamePlayNeutral.wav");
+		fiveSecLeft = new SetAudio("src/sounds/gamePlay5secLeft.wav");
+		buzzer = new SetAudio("src/sounds/gamePlayBuzzer.wav");
+		//add 2 new sounds!!
 	}
 	
 	public void resetGame(){  
@@ -180,11 +200,21 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	
 	public void run() {
+		/*/songCounter++
+		if(soundCounter == 1000) {
+			//stop old
+			//start new
+		}
+			}else if((soundCounter == 2000)){
+				
+				if(soundCounter == 3000) {
+					soundCounter = 0;
+				}
+		}/*/
+			
 		secondsLeft--;
 		gameJFrame.getContentPane().add(timerLabel);
-		gameJFrame.getContentPane().add(loserLabel);
-		//gameJFrame.setIconImage(new ImageIcon("src/iconImage/SetQuestionMark"));
-		timerLabel.setText("Timer remaining:   " + secondsLeft);
+		timerLabel.setText("Time remaining:   " + secondsLeft);
 		timerLabel.setFont(new Font("Monospaced", Font.PLAIN, 14));
 		timerLabel.setVisible(true);
 		if (secondsLeft <= 0) /*/&& (level == BEGINNER))/*/ {
@@ -192,16 +222,17 @@ public class SetController extends TimerTask implements MouseListener {
 				System.out.println("Sound2");
 				booing.startSounds();
 				}	
+			
 			loserLabel.setVisible(true);
-			JOptionPane.showMessageDialog(gameJFrame,"BUMMER! You lost points!","Timer went off!",JOptionPane.PLAIN_MESSAGE);
-			//add image
+			restartTimer();
+			JOptionPane.showMessageDialog(gameJFrame,"BUMMER! You lost points!","Timer went off! Better hurry!",JOptionPane.PLAIN_MESSAGE, loserImage);
+			loserLabel.setVisible(false);
 			System.out.println("Timer went off!");
-			System.out.println("BUMMER! You lost points!");
+			System.out.println("BUMMER! You lost points! Hurry Up!");
 			deductPoints();
 			displayScore();
-			restartTimer();
-			timerLabel.setText("Timer remaining:   " + secondsLeft);
-			loserLabel.setVisible(false);
+			timerLabel.setText("Time remaining:   " + secondsLeft);
+			
 			} 
 			else {
 				if(secondsLeft == 10) {
@@ -212,25 +243,32 @@ public class SetController extends TimerTask implements MouseListener {
 						heartbeat.startSounds(); 
 						//tenSecLeft = new SetSounds("src/sounds/gamePlayHeartbeat.wav");
 					 }
-				}else {
-					if((secondsLeft == 5) && (level == EXPERT)) {
-							System.out.println("Sound3");
-							//startMusic("src/music/gamePlayLowScore.wav");
-							//new sound to play
-						 }
-				
-				}	
+				}}if((secondsLeft == 5) && (level == EXPERT)) {
+					System.out.println("Sound4");
+					fiveSecLeft.startSounds();
+				} else {
+						if((secondsLeft <= 0.0) && (level == EXPERT)) {
+							System.out.println("Sound 5");
+								buzzer.startSounds();
+					}
+						//cant get sound5 to work
+						//cant get iconImages to work
+		
 			}
-	}
+
+		
+}
+
 	
 	public void restartTimer() {
 		secondsLeft = TIME_TO_FIND_SET[level];
 	    System.out.println("Time left = " + secondsLeft);
-	    if(tenSecLeft.isPlaying())
+	    if(tenSecLeft.isPlaying() || (heartbeat.isPlaying()))
 	    {
 	    	tenSecLeft.stopSounds();
+	    	heartbeat.stopSounds();
 	    }
-	  
+	    
        }
 
 	//class List implements ActionListener {
@@ -302,6 +340,7 @@ public class SetController extends TimerTask implements MouseListener {
 					cardOnTable[i] = myDeck.deal();
 					System.out.println("Dealing "+cardOnTable[i].getNumber()+" of "+cardOnTable[i].getFill());
 				}
+				
 				drawDisplayCard();
 				displayScore();
 				gameTimer.schedule(this,(long)0,1000);
@@ -357,7 +396,7 @@ public class SetController extends TimerTask implements MouseListener {
 				// "New high score!"
 				// "Your score: "
 				// "Previous high score: "
-				int x = JOptionPane.showConfirmDialog(gameJFrame, "New high score!\nYour score: "+score+"\nPrevious high score: "+highScore.toString(), "Final score", JOptionPane.OK_CANCEL_OPTION);
+				int x = JOptionPane.showConfirmDialog(gameJFrame, "New high score!\nYour score: "+score+"\nPrevious high score: "+highScore.toString(), "Final score", JOptionPane.OK_CANCEL_OPTION, winImage);
 				if(x==JOptionPane.CANCEL_OPTION)
 				{
 					System.exit(0);
@@ -863,7 +902,6 @@ public class SetController extends TimerTask implements MouseListener {
 	public static void main(String[] args) {
 		System.out.println("Starting Main");
 		SetController myGame = new SetController();
-		
 	
 		
 	}
@@ -891,5 +929,5 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	}
 	
-}
+
 
