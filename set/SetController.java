@@ -69,10 +69,6 @@ public class SetController extends TimerTask implements MouseListener {
 	private JLabel timerLabel = new JLabel();
 	private JLabel loserLabel = new JLabel();
 	private JLabel winnerLabel = new JLabel();
-	private AudioInputStream audioStream;
-	private AudioFormat format;
-	private DataLine.Info info;
-	private Clip audioClip;
 	private SetAudio tenSecLeft;
 	private SetAudio booing;
 	private SetAudio goodWork;
@@ -311,7 +307,6 @@ public class SetController extends TimerTask implements MouseListener {
 			else
 			{
 				System.exit(0);
-				audioClip.close();
 			}
 		}
 		else
