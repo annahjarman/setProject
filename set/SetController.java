@@ -16,6 +16,13 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 
 public class SetController extends TimerTask implements MouseListener {
@@ -62,6 +69,10 @@ public class SetController extends TimerTask implements MouseListener {
 	private JLabel timerLabel = new JLabel();
 	private JLabel loserLabel = new JLabel();
 	private JLabel winnerLabel = new JLabel();
+	private AudioInputStream audioStream;
+	private AudioFormat format;
+	private DataLine.Info info;
+	private Clip audioClip;
 	private SetAudio tenSecLeft;
 	private SetAudio booing;
 	private SetAudio goodWork;
@@ -71,8 +82,10 @@ public class SetController extends TimerTask implements MouseListener {
 	private SetAudio neutral;
 	private SetAudio fiveSecLeft;
 	private SetAudio buzzer;
+	private SetAudio record;
 	private ImageIcon loserImage;
 	private ImageIcon winImage;
+	private int songCounter = 0;
 	
 
 	public SetController() {
@@ -158,6 +171,7 @@ public class SetController extends TimerTask implements MouseListener {
 		neutral = new SetAudio("src/music/gamePlayNeutral.wav");
 		fiveSecLeft = new SetAudio("src/sounds/gamePlay5secLeft.wav");
 		buzzer = new SetAudio("src/sounds/gamePlayBuzzer.wav");
+		record = new SetAudio("src/sounds/gamePlayRecord.wav");
 		//add 2 new sounds!!
 	}
 	
@@ -189,18 +203,26 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	
 	public void run() {
-		/*/songCounter++
-		if(soundCounter == 1000) {
-			//stop old
-			//start new
-		}
-			}else if((soundCounter == 2000)){
-				
-				if(soundCounter == 3000) {
-					soundCounter = 0;
-				}
-		}/*/
+		songCounter++;
+		if(songCounter == 60) {
+			jungle.stopSounds();
+			record.startSounds();
+			neutral.startSounds();
 			
+		}else if(songCounter == 120){
+			neutral.stopSounds();
+			record.startSounds();
+			play2.startSounds();
+			
+			}else if (songCounter == 180) {
+				play2.stopSounds();
+				record.startSounds();
+				jungle.startSounds();
+				songCounter = 0;	
+				}
+		
+		
+		
 		secondsLeft--;
 		gameJFrame.getContentPane().add(timerLabel);
 		timerLabel.setText("Time remaining:   " + secondsLeft);
@@ -257,7 +279,7 @@ public class SetController extends TimerTask implements MouseListener {
 	    	tenSecLeft.stopSounds();
 	    	heartbeat.stopSounds();
 	    }
-	    
+	    //ask steve about the heartbeat 
        }
 
 	//class List implements ActionListener {
@@ -310,7 +332,7 @@ public class SetController extends TimerTask implements MouseListener {
 			{
 				level = this.levels[x];
 				secondsLeft = TIME_TO_FIND_SET[level];
-				filename = "src/set/scores/"+levelName[level]+".txt";
+				filename = "src/set/scores/"+levelName[level]+".rtf";
 			}
 			else
 			{
@@ -323,7 +345,7 @@ public class SetController extends TimerTask implements MouseListener {
 			if(y==JOptionPane.OK_OPTION)
 			{
 				myDeck = new SetDeck(gameJFrame,cardWidth,cardHeight);
-				myDeck.shuffle();
+				//myDeck.shuffle();
 				currentCardsOnTable = 0;
 				for(int i = 0; i < NUMBER_OF_CARDS; i++) {
 					cardOnTable[i] = myDeck.deal();
@@ -339,6 +361,7 @@ public class SetController extends TimerTask implements MouseListener {
 			else
 			{
 				System.exit(0);
+				audioClip.close();
 			}
 		}
 		else
@@ -384,41 +407,29 @@ public class SetController extends TimerTask implements MouseListener {
 				// "New high score!"
 				// "Your score: "
 				// "Previous high score: "
-				int x = JOptionPane.showConfirmDialog(gameJFrame, "New high score!\nYour score: "+score+"\nPrevious high score: "+highScore.toString(), "Final score", JOptionPane.OK_CANCEL_OPTION/*, winImage*/);
-				if(x==JOptionPane.CANCEL_OPTION)
-				{
-					System.exit(0);
-				}
+				JOptionPane.showMessageDialog(gameJFrame, "New high score!\nYour score: "+score+"\nPrevious high score: "+highScore.toString(), "Final score", JOptionPane.OK_CANCEL_OPTION, winImage);
+
 			}
 			else if(score < highScore.getScore())
 			{
 				// "Your score: "
 				// "High score: "
-				int x = JOptionPane.showConfirmDialog(gameJFrame, "Your score: "+score+"\nHigh score: "+highScore.toString(), "Final score", JOptionPane.OK_CANCEL_OPTION);
-				if(x==JOptionPane.CANCEL_OPTION)
-				{
-					System.exit(0);
-				}
+				JOptionPane.showMessageDialog(gameJFrame, "Your score: "+score+"\nHigh score: "+highScore.toString(), "Final score", JOptionPane.OK_CANCEL_OPTION);
+				
 			}
 			else
 			{
 				// "High score!"
 				// "Your score: "
 				// "Previous high score: "
-				int x = JOptionPane.showConfirmDialog(gameJFrame, "High score!\nYour score: "+score+"\nPrevious high score: "+highScore.toString(), "Final score", JOptionPane.OK_CANCEL_OPTION);
-				if(x==JOptionPane.CANCEL_OPTION)
-				{
-					System.exit(0);
-				}
+				JOptionPane.showMessageDialog(gameJFrame, "High score!\nYour score: "+score+"\nPrevious high score: "+highScore.toString(), "Final score", JOptionPane.OK_CANCEL_OPTION);
+				
 			}
 		}
 		else
 		{
-			int x = JOptionPane.showConfirmDialog(gameJFrame, "New high score!\nYour score: "+score, "Final score", JOptionPane.OK_CANCEL_OPTION);
-			if(x==JOptionPane.CANCEL_OPTION)
-			{
-				System.exit(0);
-			}
+			JOptionPane.showMessageDialog(gameJFrame, "New high score!\nYour score: "+score, "Final score", JOptionPane.OK_CANCEL_OPTION, winImage);
+			
 		}
 		saveScore();
 	}
@@ -453,8 +464,8 @@ public class SetController extends TimerTask implements MouseListener {
 			while(myScanner.hasNextLine())
 			{
 				String playerInfo = myScanner.nextLine();
-				 if(!playerInfo.isBlank())
-					 //if(thisName.length() > 0)
+				 //if(!playerInfo.isBlank())
+					 if(playerInfo.length() > 0)
 				{
 					String[] info = playerInfo.split(": ");
 					SetPlayer myPlayer = new SetPlayer(Integer.parseInt(info[1]),info[0]);
@@ -916,6 +927,7 @@ public class SetController extends TimerTask implements MouseListener {
 
 	
 	}
+	
 }
 	
 
