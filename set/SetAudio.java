@@ -34,6 +34,11 @@ public class SetAudio
 	    }
 	}
 	
+	public void loopSounds()
+	{
+		audioClip.loop(Clip.LOOP_CONTINUOUSLY);
+	}
+	
 	public void startSounds() {
 		audioClip.setFramePosition(0);
 		audioClip.start();

@@ -16,13 +16,6 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 
 public class SetController extends TimerTask implements MouseListener {
@@ -391,7 +384,7 @@ public class SetController extends TimerTask implements MouseListener {
 				// "New high score!"
 				// "Your score: "
 				// "Previous high score: "
-				int x = JOptionPane.showConfirmDialog(gameJFrame, "New high score!\nYour score: "+score+"\nPrevious high score: "+highScore.toString(), "Final score", JOptionPane.OK_CANCEL_OPTION, winImage);
+				int x = JOptionPane.showConfirmDialog(gameJFrame, "New high score!\nYour score: "+score+"\nPrevious high score: "+highScore.toString(), "Final score", JOptionPane.OK_CANCEL_OPTION/*, winImage*/);
 				if(x==JOptionPane.CANCEL_OPTION)
 				{
 					System.exit(0);
@@ -923,6 +916,7 @@ public class SetController extends TimerTask implements MouseListener {
 
 	
 	}
+}
 	
 
 
