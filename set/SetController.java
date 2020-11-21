@@ -41,7 +41,7 @@ public class SetController extends TimerTask implements MouseListener {
 	final int[] TIME_TO_FIND_SET = {30,20,10}; //30 sec for beginner, 20 sec for moderate, 10 for expert
 	private JFrame gameJFrame;
     private boolean gameIsReady = false;
-    private Timer gameTimer = new java.util.Timer();
+    private Timer gameTimer = new Timer();
     private int secondsLeft;
     //private TimerTask timerLeft = new java.util.TimerTask();
     private SetDeck myDeck;
@@ -101,8 +101,8 @@ public class SetController extends TimerTask implements MouseListener {
 		gameJFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		gameJFrame.getContentPane().setLayout(null);
 		gameJFrame.setVisible(true);
-		loserImage = new ImageIcon("src/iconImage/SetLoser.jpg"); 
-		winImage =new ImageIcon("src/iconImage/SetWin.jpg");
+		loserImage = new ImageIcon("src/iconImage/SetQuestionMark.jpg"); 
+		winImage = new ImageIcon("src/iconImage/SetWin.jpg");
 		loserLabel.setIcon(loserImage);
 		winnerLabel.setIcon(winImage);
 		//gameJFrame.getContentPane().add(loserLabel);
@@ -156,6 +156,8 @@ public class SetController extends TimerTask implements MouseListener {
 		
 		}
 		startGame();
+		gameJFrame.addMouseListener(this);
+		gameTimer.schedule(this,(long)0,1000);
 		
 		
 		}
@@ -171,15 +173,13 @@ public class SetController extends TimerTask implements MouseListener {
 		neutral = new SetAudio("src/music/gamePlayNeutral.wav");
 		fiveSecLeft = new SetAudio("src/sounds/gamePlay5secLeft.wav");
 		buzzer = new SetAudio("src/sounds/gamePlayBuzzer.wav");
-		record = new SetAudio("src/sounds/gamePlayRecord.wav");
+		record = new SetAudio("src/sounds/gamePlayRecord_2.WAV");
 		//add 2 new sounds!!
 	}
 	
-	public void resetGame(){  
-		gameIsReady = false;
+	public void resetGame(){
 		currentCardsOnTable = 0;
-		score = 0;
-		gameIsReady = true; 
+		score = 0; 
 		int x = JOptionPane.showConfirmDialog(gameJFrame, "Play again?", null, JOptionPane.YES_NO_OPTION);
 		if(x==JOptionPane.YES_OPTION)
 		{
@@ -203,70 +203,72 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	
 	public void run() {
-		songCounter++;
-		if(songCounter == 60) {
-			jungle.stopSounds();
-			record.startSounds();
-			neutral.startSounds();
-			
-		}else if(songCounter == 120){
-			neutral.stopSounds();
-			record.startSounds();
-			play2.startSounds();
-			
-			}else if (songCounter == 180) {
-				play2.stopSounds();
+		if(gameIsReady)
+		{
+			songCounter++;
+			if(songCounter == 60) {
+				jungle.stopSounds();
 				record.startSounds();
-				jungle.startSounds();
-				songCounter = 0;	
-				}
-		
-		
-		
-		secondsLeft--;
-		gameJFrame.getContentPane().add(timerLabel);
-		timerLabel.setText("Time remaining:   " + secondsLeft);
-		timerLabel.setFont(new Font("Monospaced", Font.PLAIN, 14));
-		timerLabel.setVisible(true);
-		if (secondsLeft <= 0) /*/&& (level == BEGINNER))/*/ {
-			if (level < EXPERT) {
-				System.out.println("Sound2");
-				booing.startSounds();
-				}	
-			
-			loserLabel.setVisible(true);
-			restartTimer();
-			JOptionPane.showMessageDialog(gameJFrame,"BUMMER! You lost points!","Timer went off! Better hurry!",JOptionPane.PLAIN_MESSAGE, loserImage);
-			loserLabel.setVisible(false);
-			System.out.println("Timer went off!");
-			System.out.println("BUMMER! You lost points! Hurry Up!");
-			deductPoints();
-			displayScore();
-			timerLabel.setText("Time remaining:   " + secondsLeft);
-			
-			} 
-			else {
-				if(secondsLeft == 10) {
-					System.out.println("Sound1");
-					tenSecLeft.startSounds();
-					 if(level == INTERMEDIATE){
-						System.out.println("Sound3");
-						heartbeat.startSounds(); 
-						//tenSecLeft = new SetSounds("src/sounds/gamePlayHeartbeat.wav");
-					 }
-				}}if((secondsLeft == 5) && (level == EXPERT)) {
-					System.out.println("Sound4");
-					fiveSecLeft.startSounds();
-				} else {
-						if((secondsLeft <= 0.0) && (level == EXPERT)) {
-							System.out.println("Sound 5");
-								buzzer.startSounds();
+				neutral.startSounds();
+				
+			}else if(songCounter == 120){
+				neutral.stopSounds();
+				record.startSounds();
+				play2.loopSounds();
+				
+				}else if (songCounter == 180) {
+					play2.stopSounds();
+					record.startSounds();
+					jungle.startSounds();
+					songCounter = 0;	
 					}
-						//cant get sound5 to work
-						//cant get iconImages to work
-		
-			}
-
+			
+			
+			
+			secondsLeft--;
+			gameJFrame.getContentPane().add(timerLabel);
+			timerLabel.setText("Time remaining:   " + secondsLeft);
+			timerLabel.setFont(new Font("Monospaced", Font.PLAIN, 14));
+			timerLabel.setVisible(true);
+			if (secondsLeft <= 0) /*/&& (level == BEGINNER))/*/ {
+				if (level < EXPERT) {
+					System.out.println("Sound2");
+					booing.startSounds();
+					}	
+				
+				loserLabel.setVisible(true);
+				restartTimer();
+				JOptionPane.showMessageDialog(gameJFrame,"BUMMER! You lost points!","Timer went off! Better hurry!",JOptionPane.PLAIN_MESSAGE, loserImage);
+				loserLabel.setVisible(false);
+				System.out.println("Timer went off!");
+				System.out.println("BUMMER! You lost points! Hurry Up!");
+				deductPoints();
+				displayScore();
+				timerLabel.setText("Time remaining:   " + secondsLeft);
+				
+				} 
+				else {
+					if(secondsLeft == 10) {
+						System.out.println("Sound1");
+						tenSecLeft.startSounds();
+						 if(level == INTERMEDIATE){
+							System.out.println("Sound3");
+							heartbeat.startSounds(); 
+							//tenSecLeft = new SetSounds("src/sounds/gamePlayHeartbeat.wav");
+						 }
+					}}if((secondsLeft == 5) && (level == EXPERT)) {
+						System.out.println("Sound4");
+						fiveSecLeft.startSounds();
+					} else {
+							if((secondsLeft <= 0.0) && (level == EXPERT)) {
+								System.out.println("Sound 5");
+									buzzer.startSounds();
+						}
+							//cant get sound5 to work
+							//cant get iconImages to work
+			
+				}
+		}
 		
 }
 
@@ -332,7 +334,7 @@ public class SetController extends TimerTask implements MouseListener {
 			{
 				level = this.levels[x];
 				secondsLeft = TIME_TO_FIND_SET[level];
-				filename = "src/set/scores/"+levelName[level]+".rtf";
+				filename = "src/set/scores/"+levelName[level]+".txt";
 			}
 			else
 			{
@@ -345,7 +347,7 @@ public class SetController extends TimerTask implements MouseListener {
 			if(y==JOptionPane.OK_OPTION)
 			{
 				myDeck = new SetDeck(gameJFrame,cardWidth,cardHeight);
-				//myDeck.shuffle();
+				myDeck.shuffle();
 				currentCardsOnTable = 0;
 				for(int i = 0; i < NUMBER_OF_CARDS; i++) {
 					cardOnTable[i] = myDeck.deal();
@@ -354,9 +356,7 @@ public class SetController extends TimerTask implements MouseListener {
 				
 				drawDisplayCard();
 				displayScore();
-				gameTimer.schedule(this,(long)0,1000);
 				gameIsReady = true;
-				gameJFrame.addMouseListener(this);
 			}
 			else
 			{
@@ -399,6 +399,9 @@ public class SetController extends TimerTask implements MouseListener {
 	
 	public void displayFinalScore()
 	{
+		gameIsReady = false;
+		timerLabel.setVisible(false);
+		scoreLabel.setVisible(false);
 		SetPlayer highScore = getHighScore();
 		if(highScore != null)
 		{
@@ -442,7 +445,7 @@ public class SetController extends TimerTask implements MouseListener {
 		try
 		{
 			FileWriter myWriter = new FileWriter(filename,true);
-			myWriter.write("\n"+thisPlayer.toString());
+			myWriter.write(thisPlayer.toString()+"\n");
 			myWriter.close();
 			System.out.println("Output to file successful.");
 		}
@@ -740,6 +743,7 @@ public class SetController extends TimerTask implements MouseListener {
 		for(int i = 0; i < 3; i++)
 		{
 			selection[i].deselectCard();
+			System.out.println("Selected? "+selection[i].isSelected());
 			undealThisCard(selection[i]);
 			selection[i] = null;
 		}
@@ -829,6 +833,7 @@ public class SetController extends TimerTask implements MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		System.out.println("Game ready? "+gameIsReady);
 		if(gameIsReady)
 		{
 			if(hintSet[0]!=null)
@@ -845,8 +850,10 @@ public class SetController extends TimerTask implements MouseListener {
 			}
 			SetCard selected = getSelectedCard(e.getX(),e.getY());
 			System.out.println(selected);
+			System.out.println("Null card? "+(selected==null));
 			if(selected != null)
 			{
+				System.out.println("Selected?"+selected.isSelected());
 				if(!selected.isSelected())
 				{
 					selected.selectCard();

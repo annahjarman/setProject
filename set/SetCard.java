@@ -77,6 +77,7 @@ public class SetCard {
 	public void undrawCard()
 	{
 		labelToDraw.setVisible(false);
+		this.selected = false;
 	}
 	
 	public void selectCard()
